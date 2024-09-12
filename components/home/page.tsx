@@ -86,7 +86,7 @@ const GameServersPage = () => {
         <div className="h-[20%] px-4 flex flex-col relative z-10">
           <h3 className="text-lg  font-semibold text-black dark:text-white  truncate">{gameServer.name}</h3>
           <p className="text-gray-500  dark:text-gray-400 ">Small game server</p>
-          <span className="text-black  dark:text-white">Starting at: </span>
+          <span className="text-black text-sm dark:text-white">Starting at: </span>
         
         </div>
       </div>
