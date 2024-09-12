@@ -1,5 +1,5 @@
 import type { ResultSetHeader, RowDataPacket } from 'mysql2';
-import type { DB_GameServer, DB_GameServerPricing } from '@/types/schema'; // Assuming you have these types defined
+import type { DB_GameServer, DB_GameServerFeatures, DB_GameServerPricing } from '@/types/schema'; // Assuming you have these types defined
 import db from './mysql';
 
 interface DB_GameServerDB extends DB_GameServer, RowDataPacket { }
@@ -82,6 +82,31 @@ const GameServerProducts = {
             return {
                 ...dbProduct,
                 pricing
+            }
+
+        } catch (err) {
+            console.log(`[DB] Error while getting products with pricing: ${err}`);
+            return null;
+        }
+    },
+
+    getGameFeatures: async (game_id: string): Promise<(DB_GameServer & { features: DB_GameServerFeatures[] }) | null> => {
+        try {
+            // Query to get all database products
+            const [rows] = await db.query<DB_GameServerDB[]>('SELECT * FROM `p_gameserver` WHERE id = ?', [game_id]);
+            if (!rows.length) return null;
+
+            const dbProduct = rows[0];
+            if (dbProduct.versions) dbProduct.versions = (dbProduct.versions as unknown as string).split(',');
+
+            const [features] = await db.query<DB_GameServerFeatures[]>(
+                'SELECT * FROM `p_gameserver_features` WHERE id = ?',
+                [game_id]
+            );
+
+            return {
+                ...dbProduct,
+                features
             }
 
         } catch (err) {

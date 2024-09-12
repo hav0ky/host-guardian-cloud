@@ -1,0 +1,38 @@
+[
+    {
+      "title": "Minecraft",
+      "cover_image": "https://example.com/images/minecraft.jpg",
+      "description": "A sandbox game where you can build and explore virtual worlds made up of blocks.",
+      "genre": "Sandbox",
+      "release_date": "2011-11-18"
+    },
+    {
+      "title": "Counter-Strike 2",
+      "cover_image": "https://example.com/images/cs2.jpg",
+      "description": "The latest installment in the Counter-Strike series, offering enhanced graphics and gameplay.",
+      "genre": "First-Person Shooter",
+      "release_date": "2023-09-27"
+    },
+    {
+      "title": "Counter-Strike 1.6",
+      "cover_image": "https://example.com/images/cs1.6.jpg",
+      "description": "A classic first-person shooter that defined the genre with its intense, team-based gameplay.",
+      "genre": "First-Person Shooter",
+      "release_date": "2000-11-08"
+    },
+    {
+      "title": "Valorant",
+      "cover_image": "https://example.com/images/valorant.jpg",
+      "description": "A tactical first-person shooter with precise gunplay and unique character abilities.",
+      "genre": "First-Person Shooter",
+      "release_date": "2020-06-02"
+    },
+    {
+      "title": "PUBG PC",
+      "cover_image": "https://example.com/images/pubg.jpg",
+      "description": "A battle royale game where players fight to be the last one standing on a large map.",
+      "genre": "Battle Royale",
+      "release_date": "2017-12-20"
+    }
+  ]
+  

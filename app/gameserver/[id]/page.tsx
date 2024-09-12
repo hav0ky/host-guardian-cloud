@@ -1,13 +1,16 @@
+// import { getGameServerById } from "@/config/gameservers"
 import HeroSection from "./hero"
 import { redirect } from "next/navigation"
 import query from "@/lib/db"
 import GameServerListing from "./listing"
 import WidthWrapper from "@/components/ui/width-wrapper"
 import Image from "next/image"
+import { HoverEffect } from "@/components/ui/card-hover-effect"
 
 const GamePage = async ({ params }: { params: { id: string } }) => {
     const data = await query.gameservers.getGameServerWithPricingById(params.id)
-
+    const featureData = await query.gameservers.getGameFeatures(params.id);
+    console.log(featureData?.features)
     if (!data) {
         redirect('/')
     }
@@ -49,6 +52,16 @@ const GamePage = async ({ params }: { params: { id: string } }) => {
                     </div>
                 </section>
             </div>
+            
+            <div className="max-w-5xl mx-auto px-4">
+                <h1 className="text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-20">
+                   Features
+                </h1>
+                <HoverEffect items={featureData?.features} />
+            </div>
+            {/* footer */}
+            <div className="pt-24"/>
+
         </div>
     )
 }
