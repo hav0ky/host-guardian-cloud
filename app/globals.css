@@ -88,3 +88,9 @@
     @apply bg-background text-foreground;
   }
 }
+.halo-light {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 20%, transparent 70%);
+  filter: blur(20px);
+  transform: scale(1.2);
+  pointer-events: none;
+}

@@ -20,8 +20,8 @@ const GameServersPage = () => {
   const [hovered, setHovered] = useState(false);
 
   return (
-    <>
-      <main className=" relative w-[100vw]  flex-grow flex flex-col items-center justify-center dark:bg-slate-950 text-white">
+    <> 
+      <main className=" outer  relative w-[100vw] rounded-s-3xl -full  border flex-grow flex flex-col items-center justify-center dark:bg-neutral-900 text-white">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('/game_server_bg.jpg')`, backgroundSize: 'contain', backgroundPosition: 'center', }}></div>
 
         <Carousel
@@ -36,14 +36,10 @@ const GameServersPage = () => {
               <CarouselItem
                 key={index}
                 className="relative w-full h-[60vh] flex items-center justify-center"
-              // style={{
-              //   backgroundImage: `url(${'/game_server_bg.jpg'})`, backgroundSize: 'contain', backgroundPosition: 'center',
-              //   // borderColor: 'red', borderWidth:2
-              // }}
               >
-                <div className="relative z-10 flex flex-col md:flex-row w-full h-full  backdrop-blur-sm">
+                <div className="relative  z-10 flex flex-col md:flex-row w-full h-full  backdrop-blur-sm">
                   {/* Text Section */}
-                  <div className="md:w-1/2 flex flex-col  justify-center items-start p-24 xl:ml-44 lg:4  md:ml-32 dark:text-white text-black">
+                  <div className=" md:w-1/2 flex flex-col  justify-center items-start p-24 xl:ml-44 lg:4  md:ml-32 dark:text-white text-black">
                     <h2 className="text-2xl md:text-4xl font-bold mb-2 text-center drop-shadow-lg">{message.title}</h2>
                     <p className="text-lg mb-4 whitespace-normal drop-shadow-md ">{message.description}</p>
                     <button className="dark:bg-white bg-black dark:text-black text-white py-2 px-4 rounded-lg drop-shadow-lg">Try Now</button>
@@ -56,6 +52,7 @@ const GameServersPage = () => {
                       src={'/img/games/cs2.png'}
                       alt="Image Description"
                     />
+                   
                   </div>
                 </div>
               </CarouselItem>
@@ -67,38 +64,42 @@ const GameServersPage = () => {
       <WidthWrapper>
 
         <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:gap-4 gap-14">
-            {gameServers.map(gameServer =>
-              <Link href={`/gameserver/${gameServer.id}`} key={gameServer.id}>
-                <div className="flex flex-col h-[450px] w-full  rounded-lg border hover:border-gray-400 border-neutral-700 overflow-hidden shadow-lg relative group">
-                  <div className="relative h-[60%] overflow-hidden m-2">
-                    <Image
-                      src={gameServer.background}
-                      alt={gameServer.id}
-                      width={500}
-                      height={500}
-                      className="object-cover w-full rounded-lg h-full transition-all duration-300 transform group-hover:scale-105 group-hover:brightness-10"
-                    />
-                    <div className="absolute inset-0 bg-black bg-opacity-20 transition-opacity duration-300 group-hover:bg-opacity-0"></div>
-                  </div>
-                  <div className="h-[40%] p-4 flex flex-col justify-between ">
-                    <h3 className="text-lg font-semibold text-black dark:text-white mb-2 truncate">{gameServer.name}</h3>
-                    <p className="text-gray-500 dark:text-gray-400 mb-2">
-                      Small game server
-                    </p>
-                    <p className="text-gray-500 dark:text-gray-400 mb-2">
-                      High speed
-                    </p>
-                    <div className="flex items-center space-x-1">
-                      <span className="text-black dark:text-white">Starting at: </span>
-                      <span className="text-lg font-bold text-black dark:text-white">{'$9'}</span>
-                    </div>
-                  </div>
-                </div>
+        <div className="grid   grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:gap-4 gap-14">
+  {gameServers.map(gameServer => (
+    <Link href={`/gameserver/${gameServer.id}`} key={gameServer.id}>
+      <div className="relative flex border dark:border-neutral-800 flex-col h-[450px] w-full rounded-md hover:border-gray-400  overflow-hidden shadow-lg group">
+        
+        {/* Halo Effect using a Pseudo Element */}
+        <div className="absolute inset-0 z-0 halo-light"></div>
 
-              </Link>
-            )}
+        <div className=" h-[80%] overflow-hidden  m-2 relative z-10">
+          <Image
+            src={gameServer.background}
+            alt={gameServer.id}
+            width={500}
+            height={700}
+            className="object-cover w-full rounded-md h-full transition-all duration-300 transform group-hover:scale-105 group-hover:brightness-10 border-0"
+          />
+          <div className="absolute inset-0 bg-transparent bg-opacity-20 transition-opacity duration-300 group-hover:bg-opacity-0"></div>
+        </div>
+
+        <div className="h-[20%] p-4 flex flex-col justify-between relative z-10">
+          <h3 className="text-lg font-semibold text-black dark:text-white mb-2 truncate">{gameServer.name}</h3>
+          <p className="text-gray-500 dark:text-gray-400 mb-2">Small game server</p>
+          <p className="text-gray-500 dark:text-gray-400 mb-2">High speed</p>
+          <div className="flex items-center space-x-1">
+            <span className="text-black dark:text-white">Starting at: </span>
+            <span className="text-lg font-bold text-black dark:text-white">{'$9'}</span>
           </div>
+        </div>
+      </div>
+    </Link>
+  ))}
+</div>
+
+
+
+
         </div>
       </WidthWrapper>
     </>
