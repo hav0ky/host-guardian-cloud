@@ -64,15 +64,15 @@ const GameServersPage = () => {
       <WidthWrapper>
 
         <div className="container mx-auto px-4 py-8">
-        <div className="grid   grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:gap-4 gap-14">
+        <div className="grid   grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:gap-8 gap-16">
   {gameServers.map(gameServer => (
     <Link href={`/gameserver/${gameServer.id}`} key={gameServer.id}>
-      <div className="relative flex border dark:border-neutral-800 flex-col h-[450px] w-full rounded-md hover:border-gray-400  overflow-hidden shadow-lg group">
+      <div className="relative flex border dark:border-neutral-800 flex-col h-[470px] w-[3/4] rounded-md hover:border-gray-400  overflow-hidden shadow-lg group">
         
         {/* Halo Effect using a Pseudo Element */}
         <div className="absolute inset-0 z-0 halo-light"></div>
 
-        <div className=" h-[80%] overflow-hidden  m-2 relative z-10">
+        <div className=" p-3 px-4 h-[80%] overflow-hidden   relative z-10">
           <Image
             src={gameServer.background}
             alt={gameServer.id}
@@ -83,14 +83,11 @@ const GameServersPage = () => {
           <div className="absolute inset-0 bg-transparent bg-opacity-20 transition-opacity duration-300 group-hover:bg-opacity-0"></div>
         </div>
 
-        <div className="h-[20%] p-4 flex flex-col justify-between relative z-10">
-          <h3 className="text-lg font-semibold text-black dark:text-white mb-2 truncate">{gameServer.name}</h3>
-          <p className="text-gray-500 dark:text-gray-400 mb-2">Small game server</p>
-          <p className="text-gray-500 dark:text-gray-400 mb-2">High speed</p>
-          <div className="flex items-center space-x-1">
-            <span className="text-black dark:text-white">Starting at: </span>
-            <span className="text-lg font-bold text-black dark:text-white">{'$9'}</span>
-          </div>
+        <div className="h-[20%] px-4 flex flex-col relative z-10">
+          <h3 className="text-lg  font-semibold text-black dark:text-white  truncate">{gameServer.name}</h3>
+          <p className="text-gray-500  dark:text-gray-400 ">Small game server</p>
+          <span className="text-black  dark:text-white">Starting at: </span>
+        
         </div>
       </div>
     </Link>
