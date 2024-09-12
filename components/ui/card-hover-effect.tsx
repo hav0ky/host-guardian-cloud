@@ -71,7 +71,7 @@ export const HoverEffect = ({
             
           </AnimatePresence>
           <Card>
-            <CardIcon icon={items?.iconname} className="mr-2" /> {/* Icon with same style */}
+            <CardIcon icon={items.iconname} className="mr-2" /> {/* Icon with same style */}
             <CardTitle>{item.featurename}</CardTitle>
             <CardDescription>{item.description}</CardDescription>
           </Card>
