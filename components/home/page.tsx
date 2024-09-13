@@ -14,13 +14,14 @@ import WidthWrapper from "@/components/ui/width-wrapper";
 import Link from "next/link";
 import Image from 'next/image'
 import { gameServers } from '@/app/config/gameservers'
+import MapComponent from './map-view'
 
 const GameServersPage = () => {
 
   const [hovered, setHovered] = useState(false);
 
   return (
-    <> 
+    <>
       <main className=" outer  relative w-[100vw] rounded-s-3xl -full  border flex-grow flex flex-col items-center justify-center dark:bg-neutral-900 text-white">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('/game_server_bg.jpg')`, backgroundSize: 'contain', backgroundPosition: 'center', }}></div>
 
@@ -52,7 +53,7 @@ const GameServersPage = () => {
                       src={'/img/games/cs2.png'}
                       alt="Image Description"
                     />
-                   
+
                   </div>
                 </div>
               </CarouselItem>
@@ -84,9 +85,10 @@ const GameServersPage = () => {
         </div>
 
         <div className="h-[20%] px-4 flex flex-col relative z-10">
-          <h3 className="text-lg  font-semibold text-black dark:text-white  truncate">{gameServer.name}</h3>
-          <p className="text-gray-500  dark:text-gray-400 ">Small game server</p>
-          <span className="text-black  dark:text-white">Starting at: </span>
+          <h3 className="text-lg  font-bold text-black dark:text-white  truncate">{gameServer.name}</h3>
+          {/* <p className="text-gray-500 text-sm  dark:text-gray-400 ">Small game server</p> */}
+          <span className="text-black mt-5  dark:text-white">Starting at: ${gameServer.price} 
+          </span>
         
         </div>
       </div>
@@ -94,10 +96,25 @@ const GameServersPage = () => {
   ))}
 </div>
 
+          </div>
+          <div>
+            <div className=' flex flex-col justify-center  text-center  items-center mt-24 '>
+              <h2 className="font-heading text-5xl text-current leading-[1.1]">
+                Our Worldwide Server Coverage
+              </h2>
+              <p className="leading-normal dark:text-gray-300 sm:text-lg sm:leading-7 max-w-3xl pt-2 mx-auto">
+                Discover our global server coverage. Hover over the map to learn more about server locations and their benefits.
+              </p>
 
+            </div>
 
+            <div className="mt-20 mb-20">
 
-        </div>
+              <MapComponent />
+
+            </div>
+
+          </div>
       </WidthWrapper>
     </>
 
