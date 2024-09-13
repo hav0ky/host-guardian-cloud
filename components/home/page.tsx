@@ -14,10 +14,11 @@ import WidthWrapper from "@/components/ui/width-wrapper";
 import Link from "next/link";
 import Image from 'next/image'
 import { gameServers } from '@/app/config/gameservers'
+import Features from './features'
 
 const GameServersPage = () => {
 
-  const [hovered, setHovered] = useState(false);
+ 
 
   return (
     <> 
@@ -63,11 +64,11 @@ const GameServersPage = () => {
       </main>
       <WidthWrapper>
 
-        <div className="container mx-auto px-4 py-8">
-        <div className="grid   grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 lg:grid-cols-3 md:gap-8 gap-16">
+        <div className="container min-h-[100vh] mx-auto px-4 py-8">
+        <div className="grid   grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-5 lg:grid-cols-3 md:gap-8 ">
   {gameServers.map(gameServer => (
     <Link href={`/gameserver/${gameServer.id}`} key={gameServer.id}>
-      <div className="relative flex border dark:border-neutral-800 flex-col h-[470px] w-[3/4] rounded-md hover:border-gray-400  overflow-hidden shadow-lg group">
+      <div className="relative flex border dark:border-neutral-800 flex-col h-[420px] w-[100%] rounded-md hover:border-gray-400  overflow-hidden shadow-lg group">
         
         {/* Halo Effect using a Pseudo Element */}
         <div className="absolute inset-0 z-0 halo-light"></div>
@@ -97,6 +98,10 @@ const GameServersPage = () => {
 
 
 
+        </div>
+        <div className='min-h-[100vh] flex justify-center items-center  align-middle '>
+
+          <Features/>
         </div>
       </WidthWrapper>
     </>
