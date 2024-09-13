@@ -13,16 +13,23 @@ import Link from "next/link";
 import Image from 'next/image'
 import { gameServers } from '@/app/config/gameservers'
 import Features from './features'
+import MapComponent from "./map-view";
+import GameServers from "./gamelist";
+import HeroFeatures from "./herofeatures";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import Accordions from "./accordians";
 
 const GameServersPage = () => {
-
-
 
   return (
     <>
       <main className=" outer  relative w-[100vw] rounded-s-3xl -full  border flex-grow flex flex-col items-center justify-center dark:bg-neutral-900 text-white">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url('/game_server_bg.jpg')`, backgroundSize: 'contain', backgroundPosition: 'center', }}></div>
-
         <Carousel
           plugins={[Autoplay({
             delay: 2000,
@@ -61,59 +68,19 @@ const GameServersPage = () => {
 
       </main>
       <WidthWrapper>
-
-        <div className="container min-h-[100vh] mx-auto px-4 py-8">
-          <div className="grid   grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-5 lg:grid-cols-3 md:gap-8 ">
-            {gameServers.map(gameServer => (
-              <Link href={`/gameserver/${gameServer.id}`} key={gameServer.id}>
-                <div className="relative flex border dark:border-neutral-800 flex-col h-[420px] w-[100%] rounded-md hover:border-gray-400  overflow-hidden shadow-lg group">
-
-                  {/* Halo Effect using a Pseudo Element */}
-                  <div className="absolute inset-0 z-0 halo-light"></div>
-
-                  <div className=" p-3 px-4 h-[80%] overflow-hidden   relative z-10">
-                    <Image
-                      src={gameServer.background}
-                      alt={gameServer.id}
-                      width={500}
-                      height={700}
-                      className="object-cover w-full rounded-md h-full transition-all duration-300 transform group-hover:scale-105 group-hover:brightness-10 border-0"
-                    />
-                    <div className="absolute inset-0 bg-transparent bg-opacity-20 transition-opacity duration-300 group-hover:bg-opacity-0"></div>
-                  </div>
-
-                  <div className="h-[20%] px-4 flex flex-col relative z-10">
-                    <h3 className="text-lg  font-semibold text-black dark:text-white  truncate">{gameServer.name}</h3>
-                    <p className="text-gray-500  dark:text-gray-400 ">Small game server</p>
-                    <span className="text-black text-sm dark:text-white">Starting at: </span>
-
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-        </div>
-
-        <div className=' flex flex-col justify-center  text-center  items-center mt-24 '>
-          <h2 className="font-heading text-5xl text-current leading-[1.1]">
-            Our Worldwide Server Coverage
-          </h2>
-          <p className="leading-normal dark:text-gray-300 sm:text-lg sm:leading-7 max-w-3xl pt-2 mx-auto">
-            Discover our global server coverage. Hover over the map to learn more about server locations and their benefits.
-          </p>
-
-        </div>
-
-        <div className="mt-20 mb-20">
-
-        </div>
-        <div className='min-h-[100vh] flex justify-center items-center  align-middle '>
-
-          <Features />
-        </div>
-
+        <HeroFeatures />
+        {/* game listing section */}
+        <GameServers />
+        {/* mapview section */}
+        <MapComponent />
+        {/* Features section */}
+        <Features />
+        {/* QA section  */}
+        {/* <div className="flex justify-center items-center py-24"> */}
+        <Accordions/>
+        {/* </div> */}
       </WidthWrapper>
+
     </>
 
   )

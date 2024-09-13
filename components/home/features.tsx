@@ -43,30 +43,32 @@ const featuresData: FeatureCard[] = [
 
 const Features: React.FC = () => {
   return (
-    <section className="   rounded-lg  opacity-90 dark:bg-transparent bg-neutral-400/60 text-white py-9 ">
-    {/* Background gradient to top-left */}
-    <div className=" opacity-90 pointer-events-none"></div>
-    
-    <div className="    ">
-      <h2 className="text-3xl text-black dark:text-white font-bold text-center mb-10">OUR FEATURES</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 px-5">
-        {featuresData.map((feature, index) => (
-            <div key={index} className="dark:bg-neutral-950 dark:border-neutral-900 dark:text-white  bg-neutral-200 border flex flex-col text-left border-neutral-300 text-black p-6 rounded-lg shadow-lg relative z-10">
-  <img
-    src={feature.icon}
-    alt={feature.title}
-    className="w-12 h-12 mb-4 mx-auto" // Centers the image horizontally
-  />
-  <h3 className="text-xl dark:text-gray-300/90 font-semibold mb-2">{feature.title}</h3>
-  <p className="text-gray-400 ">{feature.description}</p>
-</div>
+    <div className='min-h-[100vh] flex justify-center items-center  align-middle '>
+      <section className="rounded-lg  opacity-90 dark:bg-transparent bg-neutral-400/60 text-white py-9 ">
+        {/* Background gradient to top-left */}
+        <div className=" opacity-90 pointer-events-none"></div>
 
-   
-        ))}
-      </div>
+        <div className="    ">
+          <h2 className="text-3xl text-black dark:text-white font-bold text-center mb-10">OUR FEATURES</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 px-5">
+            {featuresData.map((feature, index) => (
+              <div key={index} className="dark:bg-neutral-950 dark:border-neutral-900 dark:text-white  bg-neutral-200 border flex flex-col text-left border-neutral-300 text-black p-6 rounded-lg shadow-lg relative z-10">
+                <img
+                  src={feature.icon}
+                  alt={feature.title}
+                  className="w-12 h-12 mb-4 mx-auto" // Centers the image horizontally
+                />
+                <h3 className="text-xl dark:text-gray-300/90 font-semibold mb-2">{feature.title}</h3>
+                <p className="text-gray-400 ">{feature.description}</p>
+              </div>
+
+
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
-  </section>
-);
+  );
 };
 
 export default Features;

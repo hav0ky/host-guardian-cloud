@@ -10,7 +10,19 @@ import { regions } from './region-list';
 
 const MapComponent = () => {
     return (
-        <div className="relative">
+
+        <>
+        <div className=' flex flex-col justify-center  text-center  items-center mt-24 '>
+          <h2 className="text-3xl text-black dark:text-white font-bold text-center">
+            Our Worldwide Server Coverage
+          </h2>
+          <p className="leading-normal dark:text-gray-300 sm:text-lg sm:leading-7 max-w-3xl pt-2 mx-auto">
+            Discover our global server coverage. Hover over the map to learn more about server locations and their benefits.
+          </p>
+
+        </div>
+     
+        <div className="relative mt-20 mb-20">
             <img
                 src="/img/world-map.svg" 
                 className="w-full h-auto"
@@ -39,6 +51,7 @@ const MapComponent = () => {
                 </TooltipProvider>
             )}
         </div>
+        </>
     );
 };
 
