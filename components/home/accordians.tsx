@@ -19,31 +19,31 @@ const Accordions = () => {
                 </p>
             </div>
             <Accordion type="single" collapsible className="w-full text-left space-y-2">
-                <AccordionItem value="item-1" className="bg-zinc-800 rounded-md px-4">
+                <AccordionItem value="item-1" className="dark:bg-zinc-800 rounded-md px-4">
                     <AccordionTrigger>What payment methods do you accept?</AccordionTrigger>
                     <AccordionContent>
                         Currently PayPal and Stripe are accepted world, we accept all major credit and debit cards, we also accept PayPal.
                     </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="item-2" className="bg-zinc-800 rounded-md px-4">
+                <AccordionItem value="item-2" className="dark:bg-zinc-800 rounded-md px-4">
                     <AccordionTrigger>Is there a refund for my service?</AccordionTrigger>
                     <AccordionContent>
                         Yes, if you don&apos;t like our configuration we provide full refund within 3 days of purchase.
                     </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="item-3" className="bg-zinc-800 rounded-md px-4">
+                <AccordionItem value="item-3" className="dark:bg-zinc-800 rounded-md px-4">
                     <AccordionTrigger>Can I migrate my service to other location?</AccordionTrigger>
                     <AccordionContent>
                         Yes, we can migrate your service to any location of your choice but it may take upto 1-2 days for migration.
                     </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="item-4" className="bg-zinc-800 rounded-md px-4">
+                <AccordionItem value="item-4" className="dark:bg-zinc-800 rounded-md px-4">
                     <AccordionTrigger>Can I upgrade my service after purchase?</AccordionTrigger>
                     <AccordionContent>
                         Yes, you can upgrade your service after purchase.
                     </AccordionContent>
                 </AccordionItem>
-                <AccordionItem value="item-5" className="bg-zinc-800 rounded-md px-4">
+                <AccordionItem value="item-5" className="dark:bg-zinc-800 rounded-md px-4">
                     <AccordionTrigger>Do you allow custom plugins and modifications on the game server?</AccordionTrigger>
                     <AccordionContent>
                         Yes, you can install plugins or any mods to your server from our web interface control panel.

@@ -132,19 +132,19 @@ const regions: Region[] = [
 ];
 
 interface Pricing {
-    standard: string;
+    basic: string;
     performance: string;
     extreme: string;
 }
 
 const prices: Pricing = {
-    standard: "14.99",
+    basic: "14.99",
     performance: "29.99",
     extreme: "49.99"
 };
 
 const plans: Pricing = {
-    standard: "Standard",
+    basic: "Basic plan",
     performance: "High Performance",
     extreme: "Extreme Performance"
 };

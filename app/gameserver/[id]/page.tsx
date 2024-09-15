@@ -18,19 +18,23 @@ const GamePage = async ({ params }: { params: { id: string } }) => {
     return (
         <div>
             <HeroSection data={data} />
-            <WidthWrapper className="">
-                <div className="pb-10 max-w-7xl relative w-full">
-                    <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50 pt-20">
-                        {data.name} Pricing
-                    </h1>
-                    <p className="mt-2 font-normal text-base text-neutral-300">
-                        Pricing plans for {data.name}
-                    </p>
-                </div>
-                <div className="pb-20 w-full grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-4 md:gap-y-10 lg:gap-x-8">
-                    {data.pricing.map((p, i) =>
-                        <GameServerListing data={p} index={i} key={i} />
-                    )}
+            <WidthWrapper >
+                <div className="justify-center items-center">
+                    <div className="pb-10 max-w-7xl text-center items-center relative w-full">
+                        <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-20">
+                            {data.name} Pricing
+                        </h1>
+                        <p className="mt-2 font-normal text-base dark:text-neutral-300">
+                            Pricing plans for {data.name}
+                        </p>
+                    </div>
+                    <div className=" justify-center align-middle items-center flex flex-wrap gap-6">
+                        {data.pricing.map((p, i) =>
+                             <div className="flex justify-center items-center h-full">
+                             <GameServerListing data={p} index={i} key={i} />
+                         </div>
+                        )}
+                    </div>
                 </div>
             </WidthWrapper>
             <div className='w-full py-10'>
@@ -52,15 +56,15 @@ const GamePage = async ({ params }: { params: { id: string } }) => {
                     </div>
                 </section>
             </div>
-            
+
             <div className="max-w-5xl mx-auto px-4">
                 <h1 className="text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-20">
-                   Features
+                    Features
                 </h1>
                 <HoverEffect items={featureData?.features} />
             </div>
             {/* footer */}
-            <div className="pt-24"/>
+            <div className="pt-24" />
 
         </div>
     )
