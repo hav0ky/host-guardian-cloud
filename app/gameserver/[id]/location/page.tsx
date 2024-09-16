@@ -1,7 +1,7 @@
 "use client"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label"
 import ReactCountryFlag from "react-country-flag";
@@ -9,9 +9,10 @@ import NotFound from "@/app/not-found";
 import Link from "next/link";
 import { Undo2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { plans, prices, regions } from "@/components/home/region-list";
+import { plans, prices, Region, regions } from "@/components/home/region-list";
 import WidthWrapper from "@/components/ui/width-wrapper";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const AdService = ({ code }: { code: string }) => {
     return (
@@ -26,18 +27,42 @@ const AdService = ({ code }: { code: string }) => {
     )
 }
 
+//TODO
+
+// const regionWithPing = regions;
+
+// sort by ping and region
+// 1 dedicated ip 2 cdn 3 extra ram
+
+const filterRegionsByTab = (tabValue: string, regions: Region[]): Region[] => {
+    switch (tabValue) {
+        case 'all':
+            return regions;
+        case 'asia':
+            return regions.filter(region => region.region === 'Asia');
+        case 'europe':
+            return regions.filter(region => region.region === 'Europe');
+        case 'americas':
+            return regions.filter(region => region.region === 'North America' || region.region === 'South America');
+        case 'middle-east':
+            return regions.filter(region => region.region === 'Middle East');
+        case 'oceania':
+            return regions.filter(region => region.region === 'Oceania');
+        default:
+            return [];
+    }
+};
 export default function ConfigPage({ params }: { params: { plan: string } }) {
     const [step, SetStep] = useState(0)
     const [value, SetValue] = useState("Mumbai")
     const search = useSearchParams()
     const plan: string = search.get('plan') || "none"
     console.log("Hello", search)
-    if (plan === "Basic Plan" || plan === "performance" || plan === "extreme") {
-        return (
-            // <div className="bg-zinc-900">
-            <WidthWrapper>
-                <div className="py-20 text-white min-h-screen" id="region">
-                    {/* <Link
+    const [selectedTab, setSelectedTab] = useState('all');
+
+    const filteredRegions = useMemo(() => filterRegionsByTab(selectedTab, regions), [selectedTab, regions]);
+
+    {/* <Link
                             href='/gameserver/'
                             className={cn(buttonVariants({
                                 variant: 'outline',
@@ -45,7 +70,7 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
                             }), "ml-6")}>
                             <Undo2 size={16} className="mr-1" />back
                         </Link> */}
-                    {/* <div className="max-w-xs rounded-lg overflow-hidden shadow-lg bg-white dark:bg-gray-800 transform hover:scale-105 transition-transform duration-300 ease-in-out">
+    {/* <div className="max-w-xs rounded-lg overflow-hidden shadow-lg bg-white dark:bg-gray-800 transform hover:scale-105 transition-transform duration-300 ease-in-out">
                             <div className="h-32 w-full relative">
                                 <img className="absolute inset-0 w-full h-full object-cover" src="https://flagcdn.com/w320/us.png" alt="USA Flag" />
                             </div>
@@ -57,61 +82,92 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
                             </div>
                         </div> */}
 
-                    <Card className="border-none bg-transparent ">
-                        <CardHeader>
+    {/* <CardHeader>
                             <CardTitle>Location</CardTitle>
                             <CardDescription>Select your desired location for the minimal ping.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <RadioGroup defaultValue={value} onValueChange={(e) => SetValue(e)} className="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-5 gap-4 ">
-                                {regions.map((region) =>
-                                    <div key={region.id} className="relative">
-                                        {/* Hidden radio button */}
-                                        <RadioGroupItem value={region.city} id={region.city} className="peer sr-only" />
+                        </CardHeader> */}
+    if (plan === "Basic Plan" || plan === "performance" || plan === "extreme") {
+        return (
+            // <div className="bg-zinc-900">
 
-                                        {/* Label styled as the card */}
-                                        <Label
-                                            htmlFor={region.city}
-                                            className={cn(
-                                                'flex flex-col justify-between rounded-md border-2 cursor-pointer transition-transform duration-300 p-4',
-                                                'bg-zinc-200 dark:bg-zinc-900 border-muted hover:scale-105 hover:border-gray-700',
-                                                'dark:peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary',
-                                                'peer-data-[state=checked]:shadow-sm peer-data-[state=checked]:shadow-primary/50'
-                                            )}
-                                        >
-                                            {/* Flag */}
-                                            <ReactCountryFlag
-                                                countryCode={region.flag}
-                                                svg
-                                                style={{
-                                                    width: '2.5em',
-                                                    height: '2.5em',
-                                                }}
-                                                className="rounded-lg"
-                                                title={region.name}
-                                            />
+            <WidthWrapper>
 
-                                            {/* City and Country */}
-                                            <div className="text-left">
-                                                <h3 className="text-lg font-bold">{region.city}</h3>
-                                                <p className="text-lg">{region.name}</p>
+                <div id="region">
+                    <Tabs defaultValue="all" className="w-auto max-w-full" value={selectedTab} onValueChange={setSelectedTab}>
+                        <div className="pb-10 max-w-7xl text-left items-center relative w-full">
+                            <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-20">
+                                Location
+                            </h1>
+                            <p className="mt-2 font-normal text-base dark:text-neutral-300">
+                                Select your desired location for the minimal ping.
+                            </p>
+                        </div>
+                        <TabsList className="justify-start inline-flex space-x-2 overflow-x-auto whitespace-nowrap h-full">
+                            <TabsTrigger value="all">All</TabsTrigger>
+                            <TabsTrigger value="asia">Asia</TabsTrigger>
+                            <TabsTrigger value="europe">Europe</TabsTrigger>
+                            <TabsTrigger value="americas">Americas</TabsTrigger>
+                            <TabsTrigger value="middle-east">Middle East</TabsTrigger>
+                            <TabsTrigger value="oceania">Oceania</TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value={selectedTab}>
+                            <Card className="border-none bg-transparent mt-10">
+                                <CardContent>
+                                    <RadioGroup
+                                        defaultValue={value}
+                                        onValueChange={(e) => SetValue(e)}
+                                        className="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-5 gap-4"
+                                    >
+                                        {filteredRegions.map((region) => (
+                                            <div key={region.id} className="relative">
+                                                <RadioGroupItem value={region.city} id={region.city} className="peer sr-only" />
+                                                <Label
+                                                    htmlFor={region.city}
+                                                    className={cn(
+                                                        'flex flex-col justify-between rounded-md border-2 cursor-pointer transition-transform duration-300 p-4',
+                                                        'bg-zinc-200 dark:bg-zinc-900 border-muted hover:scale-105 hover:border-gray-700',
+                                                        'dark:peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary',
+                                                        'peer-data-[state=checked]:shadow-sm peer-data-[state=checked]:shadow-primary/50'
+                                                    )}
+                                                >
+                                                    {/* Flag */}
+                                                    <ReactCountryFlag
+                                                        countryCode={region.flag}
+                                                        svg
+                                                        style={{
+                                                            width: '2.5em',
+                                                            height: '2.5em',
+                                                        }}
+                                                        className="rounded-lg"
+                                                        title={region.name}
+                                                    />
+
+                                                    {/* City and Country */}
+                                                    <div className="text-left">
+                                                        <h3 className="text-lg font-bold">{region.city}</h3>
+                                                        <p className="text-lg">{region.name}</p>
+                                                    </div>
+                                                </Label>
+
+                                                {/* Checkmark for selected card */}
+                                                <div className="absolute top-2 right-2 peer-data-[state=checked]:block hidden">
+                                                    <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+                                                    </svg>
+                                                </div>
                                             </div>
-                                        </Label>
-
-                                        {/* Checkmark for selected card */}
-                                        <div className="absolute top-2 right-2 peer-data-[state=checked]:block hidden">
-                                            <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                )}
-                            </RadioGroup>
-                        </CardContent>
-                        <CardFooter>
-                            <p className="text-center sm:text-left">If you&apos;re unable to find your desired location, reach out to us on <a href="/" className="text-teal-200" target="_blank">Discord</a>; we might be able to set up a server in your area.</p>
-                        </CardFooter>
-                    </Card>
+                                        ))}
+                                    </RadioGroup>
+                                </CardContent>
+                                <CardFooter>
+                                    <p className="text-center sm:text-left">
+                                        If you&apos;re unable to find your desired location, reach out to us on <a href="/" className="text-teal-200" target="_blank">Discord</a>; we might be able to set up a server in your area.
+                                    </p>
+                                </CardFooter>
+                            </Card>
+                        </TabsContent>
+                    </Tabs>
                     <Card className="mt-6 border-none bg-transparent">
                         <CardHeader>
                             <CardTitle className="text-center sm:text-left">Additional Services</CardTitle>
