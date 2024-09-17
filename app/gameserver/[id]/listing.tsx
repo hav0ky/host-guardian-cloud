@@ -78,7 +78,8 @@ const GameServerListing = ({
                     }
                 )}
                 href={`/gameserver/${data.game_id}/location?plan=${data.name}`}>
-                <Card key={data.game_id} className="w-[340px] dark:bg-zinc-800 text-center mx-auto border hover:border-white">
+                <Card key={data.game_id} className="w-[340px] dark:bg-zinc-900 text-center mx-auto border rounded-md overflow-hidden shadow-lg hover:border-white">
+                    
                     <CardHeader>
                         <CardTitle>{data.name}</CardTitle>
                         <CardDescription>{data.description}</CardDescription>

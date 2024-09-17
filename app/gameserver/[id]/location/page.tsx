@@ -7,32 +7,18 @@ import { Label } from "@/components/ui/label"
 import ReactCountryFlag from "react-country-flag";
 import NotFound from "@/app/not-found";
 import Link from "next/link";
-import { Undo2 } from "lucide-react";
+import { CloudIcon, MemoryStick, NetworkIcon, Undo2, ServerIcon, GlobeIcon, ClockIcon, CpuIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { plans, prices, Region, regions } from "@/components/home/region-list";
 import WidthWrapper from "@/components/ui/width-wrapper";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { AnimatePresence, motion } from "framer-motion";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 
-const AdService = ({ code }: { code: string }) => {
-    return (
-        <div className="flex gap-2">
-            <div className="min-w-6">
-                <svg className="h-6 w-6 text-black font-bold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                </svg>
-            </div>
-            {code}
-        </div>
-    )
-}
-
-//TODO
-
-// const regionWithPing = regions;
-
-// sort by ping and region
-// 1 dedicated ip 2 cdn 3 extra ram
 
 const filterRegionsByTab = (tabValue: string, regions: Region[]): Region[] => {
     switch (tabValue) {
@@ -52,40 +38,65 @@ const filterRegionsByTab = (tabValue: string, regions: Region[]): Region[] => {
             return [];
     }
 };
+
+const getPriceForPlan = (plan: string) => {
+    switch (plan) {
+        case "Monthly":
+            return 10.00;
+        case "Quarterly":
+            return 25.00;
+        case "Half-Yearly":
+            return 45.00;
+        case "Yearly":
+            return 80.00;
+        default:
+            return 0.00;
+    }
+};
+
+const getDescriptionForPlan = (plan: string) => {
+    switch (plan) {
+        case "Monthly":
+            return "Billed every month. Cancel anytime.";
+        case "Quarterly":
+            return "Billed every 3 months. Save 10%.";
+        case "Half-Yearly":
+            return "Billed every 6 months. Save 20%.";
+        case "Yearly":
+            return "Billed annually. Best value with 30% savings.";
+        default:
+            return "Select a plan.";
+    }
+};
+
 export default function ConfigPage({ params }: { params: { plan: string } }) {
-    const [step, SetStep] = useState(0)
     const [value, SetValue] = useState("Mumbai")
+
     const search = useSearchParams()
     const plan: string = search.get('plan') || "none"
-    console.log("Hello", search)
     const [selectedTab, setSelectedTab] = useState('all');
-
+    const [selectedDuration, setSelectedDuration] = useState('');
     const filteredRegions = useMemo(() => filterRegionsByTab(selectedTab, regions), [selectedTab, regions]);
+    const orderDetails = {
+        serverName: "Premium Gaming Server",
+        location: value,
+        duration: selectedDuration || 0,
+        specs: "8 vCPUs, 32GB RAM, 512GB SSD",
+        price: 89.99,
+    }
+    const [dedicatedIp, setDedicatedIp] = useState(false)
+    const [cdn, setCdn] = useState(false)
+    const [extraRam, setExtraRam] = useState(0)
 
-    {/* <Link
-                            href='/gameserver/'
-                            className={cn(buttonVariants({
-                                variant: 'outline',
-                                size: 'sm',
-                            }), "ml-6")}>
-                            <Undo2 size={16} className="mr-1" />back
-                        </Link> */}
-    {/* <div className="max-w-xs rounded-lg overflow-hidden shadow-lg bg-white dark:bg-gray-800 transform hover:scale-105 transition-transform duration-300 ease-in-out">
-                            <div className="h-32 w-full relative">
-                                <img className="absolute inset-0 w-full h-full object-cover" src="https://flagcdn.com/w320/us.png" alt="USA Flag" />
-                            </div>
-                            <div className="px-6 py-4">
-                                <div className="font-bold text-lg text-gray-900 dark:text-gray-100">United States</div>
-                                <p className="text-gray-700 dark:text-gray-300 text-sm">
-                                    Country details or description here.
-                                </p>
-                            </div>
-                        </div> */}
+    const basePrice = 89.99
+    const dedicatedIpPrice = 5.99
+    const cdnPrice = 9.99
+    const ramPrice = 2.99
 
-    {/* <CardHeader>
-                            <CardTitle>Location</CardTitle>
-                            <CardDescription>Select your desired location for the minimal ping.</CardDescription>
-                        </CardHeader> */}
+    const totalPrice = basePrice +
+        (dedicatedIp ? dedicatedIpPrice : 0) +
+        (cdn ? cdnPrice : 0) +
+        (extraRam * ramPrice)
     if (plan === "Basic Plan" || plan === "performance" || plan === "extreme") {
         return (
             // <div className="bg-zinc-900">
@@ -96,7 +107,7 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
                     <Tabs defaultValue="all" className="w-auto max-w-full" value={selectedTab} onValueChange={setSelectedTab}>
                         <div className="pb-10 max-w-7xl text-left items-center relative w-full">
                             <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-20">
-                                Location
+                                LOCATION
                             </h1>
                             <p className="mt-2 font-normal text-base dark:text-neutral-300">
                                 Select your desired location for the minimal ping.
@@ -112,73 +123,278 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
                         </TabsList>
 
                         <TabsContent value={selectedTab}>
-                            <Card className="border-none bg-transparent mt-10">
-                                <CardContent>
-                                    <RadioGroup
-                                        defaultValue={value}
-                                        onValueChange={(e) => SetValue(e)}
-                                        className="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-5 gap-4"
-                                    >
-                                        {filteredRegions.map((region) => (
-                                            <div key={region.id} className="relative">
-                                                <RadioGroupItem value={region.city} id={region.city} className="peer sr-only" />
-                                                <Label
-                                                    htmlFor={region.city}
-                                                    className={cn(
-                                                        'flex flex-col justify-between rounded-md border-2 cursor-pointer transition-transform duration-300 p-4',
-                                                        'bg-zinc-200 dark:bg-zinc-900 border-muted hover:scale-105 hover:border-gray-700',
-                                                        'dark:peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary',
-                                                        'peer-data-[state=checked]:shadow-sm peer-data-[state=checked]:shadow-primary/50'
-                                                    )}
-                                                >
-                                                    {/* Flag */}
-                                                    <ReactCountryFlag
-                                                        countryCode={region.flag}
-                                                        svg
-                                                        style={{
-                                                            width: '2.5em',
-                                                            height: '2.5em',
-                                                        }}
-                                                        className="rounded-lg"
-                                                        title={region.name}
-                                                    />
+                            <motion.div
+                                key={selectedTab}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.3 }}
+                            >
+                                <Card className="border-none bg-transparent mt-10">
+                                    <CardContent>
+                                        <RadioGroup
+                                            defaultValue={value}
+                                            onValueChange={(e) => SetValue(e)}
+                                            className="grid grid-cols-1 sm:grid-cols-4 lg:grid-cols-5 gap-4"
+                                        >
+                                            {filteredRegions.map((region) => (
+                                                <div key={region.id} className="relative">
+                                                    <RadioGroupItem value={region.city} id={region.city} className="peer sr-only" />
+                                                    <Label
+                                                        htmlFor={region.city}
+                                                        className={cn(
+                                                            'flex flex-col justify-between rounded-md border-2 cursor-pointer transition-transform duration-300 p-4',
+                                                            'bg-zinc-200 dark:bg-zinc-900 border-muted hover:scale-105 hover:border-gray-700',
+                                                            'dark:peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary',
+                                                            'peer-data-[state=checked]:shadow-sm peer-data-[state=checked]:shadow-primary/50'
+                                                        )}
+                                                    >
+                                                        <ReactCountryFlag
+                                                            countryCode={region.flag}
+                                                            svg
+                                                            style={{
+                                                                width: '2.5em',
+                                                                height: '2.5em',
+                                                            }}
+                                                            className="rounded-lg"
+                                                            title={region.name}
+                                                        />
 
-                                                    {/* City and Country */}
-                                                    <div className="text-left">
-                                                        <h3 className="text-lg font-bold">{region.city}</h3>
-                                                        <p className="text-lg">{region.name}</p>
+                                                        <div className="text-left">
+                                                            <h3 className="text-lg font-bold">{region.city}</h3>
+                                                            <p className="text-lg">{region.name}</p>
+                                                        </div>
+                                                    </Label>
+
+                                                    <div className="absolute top-2 right-2 peer-data-[state=checked]:block hidden">
+                                                        <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
+                                                        </svg>
                                                     </div>
-                                                </Label>
-
-                                                {/* Checkmark for selected card */}
-                                                <div className="absolute top-2 right-2 peer-data-[state=checked]:block hidden">
-                                                    <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"></path>
-                                                    </svg>
                                                 </div>
-                                            </div>
-                                        ))}
-                                    </RadioGroup>
-                                </CardContent>
-                                <CardFooter>
-                                    <p className="text-center sm:text-left">
-                                        If you&apos;re unable to find your desired location, reach out to us on <a href="/" className="text-teal-200" target="_blank">Discord</a>; we might be able to set up a server in your area.
-                                    </p>
-                                </CardFooter>
-                            </Card>
+                                            ))}
+                                        </RadioGroup>
+                                    </CardContent>
+                                    <CardFooter>
+                                        <p className="text-center sm:text-left">
+                                            If you&apos;re unable to find your desired location, reach out to us on <a href="/" className="text-teal-200" target="_blank">Discord</a>; we might be able to set up a server in your area.
+                                        </p>
+                                    </CardFooter>
+                                </Card>
+                            </motion.div>
                         </TabsContent>
                     </Tabs>
-                    <Card className="mt-6 border-none bg-transparent">
-                        <CardHeader>
-                            <CardTitle className="text-center sm:text-left">Additional Services</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <AdService code="Automatic backup system." />
-                            <AdService code="Optional MySQL-Database. Allows to use plugins needing such a database." />
-                            <AdService code="Faster download of maps over the web server, as long as this is supported by the game. Also applies to maps you have uploaded." />
-                        </CardContent>
-                    </Card>
-                    <Card className="mx-auto bg-gradient-to-r from-indigo-500 mt-6">
+                    <div className="container mx-auto p-4 mb-20 space-y-4">
+                        {/* Subscription Cards */}
+                        <div>
+                            <h2 className="text-2xl font-bold mb-4">Select Subscription Plan</h2>
+                            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                                {["Monthly", "Quarterly", "Half-Yearly", "Yearly"].map((plan, index) => (
+                                    <Card
+                                        key={index}
+                                        className={`p-2 w-full max-w-xs text-center cursor-pointer border-2 transition-all duration-300 ${selectedDuration === plan
+                                            ? "border-white"
+                                            : "border-neutral-800"
+                                            }`}
+                                        onClick={() => setSelectedDuration(plan)}
+                                        style={{ height: '100px' }} // Set card height to 80px
+                                    >
+                                        <CardHeader className="flex items-center justify-center h-1/3">
+                                            <CardTitle className="text-sm font-semibold">{plan}</CardTitle> {/* Adjusted font size */}
+                                        </CardHeader>
+                                        <CardContent className="flex flex-col items-center justify-center h-2/3 space-y-1"> {/* Adjusted spacing */}
+                                            <p className="text-xs font-medium">${getPriceForPlan(plan)} / {plan}</p> {/* Adjusted font size */}
+                                            <p className="text-muted-foreground text-xs">{getDescriptionForPlan(plan)}</p> {/* Adjusted font size */}
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <div className="pb-10 max-w-7xl text-left items-center relative w-full">
+                        <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-20">
+                            CONFIGURATBLE OPTIONS
+                        </h1>
+                        <p className="mt-2 font-normal text-base dark:text-neutral-300">
+                            Fine-Tune Your Setup for Optimal Performance.
+                        </p>
+                    </div>
+
+                    <div className="container mx-auto p-4 mb-20">
+                        <div className="flex flex-col lg:flex-row gap-8">
+                            <Card className="w-full lg:w-2/3 flex flex-col">
+                                <CardHeader>
+                                    <CardTitle className="text-2xl font-bold">Server Configuration</CardTitle>
+                                </CardHeader>
+                                <CardContent className="flex-grow space-y-6">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-2">
+                                            <NetworkIcon className="h-4 w-4" />
+                                            <Label htmlFor="dedicated-ip">Dedicated IP</Label>
+                                        </div>
+                                        <Switch
+                                            id="dedicated-ip"
+                                            checked={dedicatedIp}
+                                            onCheckedChange={setDedicatedIp}
+                                        />
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-2">
+                                            <CloudIcon className="h-4 w-4" />
+                                            <Label htmlFor="cdn">CDN</Label>
+                                        </div>
+                                        <Switch
+                                            id="cdn"
+                                            checked={cdn}
+                                            onCheckedChange={setCdn}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-2">
+                                                <MemoryStick className="h-4 w-4" />
+                                                <Label>Extra RAM</Label>
+                                            </div>
+                                            <span>{extraRam} GB</span>
+                                        </div>
+
+                                        <Select value={extraRam.toString()} onValueChange={(value: any) => setExtraRam(Number(value))}>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select RAM" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="0">0 GB</SelectItem>
+                                                <SelectItem value="4">4 GB</SelectItem>
+                                                <SelectItem value="8">8 GB</SelectItem>
+                                                <SelectItem value="12">12 GB</SelectItem>
+                                                <SelectItem value="16">16 GB</SelectItem>
+                                                <SelectItem value="20">20 GB</SelectItem>
+                                                <SelectItem value="24">24 GB</SelectItem>
+                                                <SelectItem value="28">28 GB</SelectItem>
+                                                <SelectItem value="32">32 GB</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-2">
+                                                <MemoryStick className="h-4 w-4" />
+                                                <Label>Extra RAM</Label>
+                                            </div>
+                                            <span>{extraRam} GB</span>
+                                        </div>
+                                        <Slider
+                                            min={0}
+                                            max={32}
+                                            step={4}
+                                            value={[extraRam]}
+                                            onValueChange={(value) => setExtraRam(value[0])}
+                                        />
+                                    </div>
+                                    <div className="space-y-4">
+                                        <DropdownMenuSeparator />
+                                        <h3 className="text-lg font-semibold">Additional Options</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <Card className="p-4">
+                                                <h4 className="font-medium mb-2">DDoS Protection</h4>
+                                                <p className="text-sm text-muted-foreground">Advanced protection against DDoS attacks</p>
+                                            </Card>
+                                            <Card className="p-4">
+                                                <h4 className="font-medium mb-2">Backup Service</h4>
+                                                <p className="text-sm text-muted-foreground">Daily backups of your server data</p>
+                                            </Card>
+                                            <Card className="p-4">
+                                                <h4 className="font-medium mb-2">24/7 Support</h4>
+                                                <p className="text-sm text-muted-foreground">Round-the-clock technical assistance</p>
+                                            </Card>
+                                            <Card className="p-4">
+                                                <h4 className="font-medium mb-2">Custom Control Panel</h4>
+                                                <p className="text-sm text-muted-foreground">Tailored control panel for easy management</p>
+                                            </Card>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            {/* Right side - Order summary */}
+                            <Card className="w-full lg:w-1/3 flex flex-col">
+                                <CardHeader>
+                                    <CardTitle className="text-2xl font-bold">Order Summary</CardTitle>
+                                </CardHeader>
+                                <CardContent className="flex-grow space-y-4">
+                                    <div className="flex items-center space-x-4">
+                                        <ServerIcon className="h-6 w-6 text-primary" />
+                                        <div>
+                                            <p className="font-medium">{orderDetails.serverName}</p>
+                                            <p className="text-sm text-muted-foreground">Selected Server</p>
+                                        </div>
+                                    </div>
+                                    <DropdownMenuSeparator />
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-2">
+                                                <GlobeIcon className="h-4 w-4 text-muted-foreground" />
+                                                <span className="text-sm">Location</span>
+                                            </div>
+                                            <span className="text-sm font-medium">{orderDetails.location}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-2">
+                                                <ClockIcon className="h-4 w-4 text-muted-foreground" />
+                                                <span className="text-sm">Duration</span>
+                                            </div>
+                                            <span className="text-sm font-medium">{orderDetails.duration}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-2">
+                                                <CpuIcon className="h-4 w-4 text-muted-foreground" />
+                                                <span className="text-sm">Specifications</span>
+                                            </div>
+                                            <span className="text-sm font-medium">{orderDetails.specs}</span>
+                                        </div>
+                                    </div>
+                                    <DropdownMenuSeparator />
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between text-sm">
+                                            <span>Base Price</span>
+                                            <span>${basePrice.toFixed(2)}</span>
+                                        </div>
+                                        {dedicatedIp && (
+                                            <div className="flex items-center justify-between text-sm">
+                                                <span>Dedicated IP</span>
+                                                <span>${dedicatedIpPrice.toFixed(2)}</span>
+                                            </div>
+                                        )}
+                                        {cdn && (
+                                            <div className="flex items-center justify-between text-sm">
+                                                <span>CDN</span>
+                                                <span>${cdnPrice.toFixed(2)}</span>
+                                            </div>
+                                        )}
+                                        {extraRam > 0 && (
+                                            <div className="flex items-center justify-between text-sm">
+                                                <span>Extra RAM ({extraRam}GB)</span>
+                                                <span>${(extraRam * ramPrice).toFixed(2)}</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <DropdownMenuSeparator />
+                                    <div className="flex items-center justify-between font-medium">
+                                        <span>Total Price</span>
+                                        <span>${totalPrice.toFixed(2)}</span>
+                                    </div>
+                                </CardContent>
+                                <CardFooter>
+                                    <Button className="w-full">Confirm Order</Button>
+                                </CardFooter>
+                            </Card>
+                        </div>
+                    </div>
+                    {/* <Card className="mx-auto bg-gradient-to-r from-indigo-500 mt-6">
                         <CardHeader>
                             <CardTitle className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-0 text-center sm:text-left">
                                 <div>
@@ -197,14 +413,14 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
                                         }), "mt-4 sm:my-auto sm:ml-4")}>
                                         Proceed to checkout
                                     </Link>
-                                    {/* <Button className="mt-4 sm:my-auto sm:ml-4">Proceed to checkout</Button> */}
+                                    <Button className="mt-4 sm:my-auto sm:ml-4">Proceed to checkout</Button>
                                 </div>
                             </CardTitle>
                         </CardHeader>
-                    </Card>
+                    </Card> */}
                 </div>
-            </WidthWrapper>
-            // </div>
+            </WidthWrapper >
+
         )
     } else {
         return (<NotFound />)
