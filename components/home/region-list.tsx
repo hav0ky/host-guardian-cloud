@@ -44,6 +44,11 @@ export interface Region {
     flag: string;
     point: [number, number];
 }
+export interface DurationPlan {
+    name: string;
+    discount: string | null;
+    billingFrequency: string;
+  }
 
 const regions: Region[] = [
     {
@@ -161,5 +166,7 @@ const plans: Pricing = {
     performance: "High Performance",
     extreme: "Extreme Performance"
 };
+
+
 
 export { server_options, regions, prices, plans }
