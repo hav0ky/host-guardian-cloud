@@ -74,7 +74,7 @@ const Features: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-[100vh] flex justify-center items-center align-middle">
+    <div className="min-h-[80vh] flex justify-center items-center align-middle">
       <section
         className="rounded-lg opacity-90 dark:bg-transparent  text-white py-9"
         ref={sectionRef}

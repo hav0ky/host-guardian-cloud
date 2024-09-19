@@ -9,7 +9,7 @@ import {
 const Accordions = () => {
     return (
         <div className='my-12 mb-24'>
-            <div className="mx-auto max-w-[58rem] items-center space-y-4 text-center mb-20" id="faq">
+            <div className="mx-auto max-w-[58rem] items-center space-y-4 text-center mb-14" id="faq">
                 <h2 className="text-3xl text-black dark:text-white font-bold text-center">
                     Frequently Asked Questions
                 </h2>
@@ -18,7 +18,7 @@ const Accordions = () => {
                     For more detailed help, check out our knowledgebase articles or reach out to our support team.
                 </p>
             </div>
-            <Accordion type="single" collapsible className="w-full text-left space-y-2">
+            <Accordion type="single" collapsible className="w-4/5 mx-auto text-left space-y-2">
                 <AccordionItem value="item-1" className="dark:bg-zinc-800 rounded-md px-4">
                     <AccordionTrigger>What payment methods do you accept?</AccordionTrigger>
                     <AccordionContent>

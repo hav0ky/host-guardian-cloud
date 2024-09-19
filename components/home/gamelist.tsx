@@ -5,8 +5,8 @@ import React from 'react'
 
 const GameServers = () => {
   return (
-    <div className="container min-h-[100vh] mx-auto mt-48">
-      <div className='flex flex-col text-center items-center my-16'>
+    <div className="container min-h-[100vh] mx-auto mt-28">
+      <div className='flex flex-col text-center items-center my-12'>
         <h2 className="text-3xl text-black dark:text-white font-bold text-center mb-2">
           GAME SERVERS
         </h2>
@@ -18,7 +18,7 @@ const GameServers = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-5 lg:grid-cols-3 md:gap-7">
         {gameServers.map(gameServer => (
           <Link href={`/gameserver/${gameServer.id}`} key={gameServer.id}>
-            <div className="relative flex border dark:border-neutral-800 flex-col h-[420px] w-full rounded-md overflow-hidden shadow-lg group transition-transform duration-300 hover:-translate-y-2"> {/* Add hover effect to slide card up */}
+            <div className="relative flex border dark:border-neutral-800 flex-col h-[380px] w-full rounded-md overflow-hidden shadow-lg group transition-transform duration-300 hover:-translate-y-2"> {/* Add hover effect to slide card up */}
               
               {/* Halo Effect using a Pseudo Element */}
               <div className="absolute inset-0 z-0 halo-light"></div>
@@ -38,8 +38,8 @@ const GameServers = () => {
                 <h3 className="text-lg font-semibold text-black dark:text-white truncate">
                   {gameServer.name}
                 </h3>
-                <p className="text-gray-500 dark:text-gray-400">Small game server</p>
-                <span className="text-black text-sm dark:text-white">
+                {/* <p className="text-gray-500 dark:text-gray-400">Small game server</p> */}
+                <span className="text-black text-sm dark:text-white pt-2">
                   Starting at: ${gameServer.price}
                 </span>
               </div>

@@ -28,7 +28,8 @@ const GamePage = async ({ params }: { params: { id: string } }) => {
                             Pricing plans for {data.name}
                         </p>
                     </div>
-                    <div className=" justify-center align-middle items-center flex flex-wrap gap-6">
+                    
+                    <div className=" justify-center align-middle items-center flex flex-wrap gap-6 pt-10">
                         {data.pricing.map((p, i) =>
                              <div className="flex justify-center items-center h-full">
                              <GameServerListing data={p} index={i} key={i} />
@@ -57,14 +58,14 @@ const GamePage = async ({ params }: { params: { id: string } }) => {
                 </section>
             </div>
 
-            <div className="max-w-5xl mx-auto px-4">
-                <h1 className="text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-20">
+            <div className="container max-w-screen-2xl px-4 sm:px-14 mx-auto">
+                <h1 className="text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50">
                     Features
                 </h1>
                 <HoverEffect items={featureData?.features} />
             </div>
             {/* footer */}
-            <div className="pt-24" />
+            <div className="pt-48" />
 
         </div>
     )

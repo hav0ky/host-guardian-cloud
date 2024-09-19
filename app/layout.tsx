@@ -31,7 +31,7 @@ export default async function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SessionProvider value={session}>
-            <main className="min-h-screen">
+            <main className="">
               <SiteHeader />
               <main>
                 {children}

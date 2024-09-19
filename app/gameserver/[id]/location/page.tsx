@@ -86,19 +86,19 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
     const [selectedTab, setSelectedTab] = useState('all');
     const [selectedDuration, setSelectedDuration] = useState('Monthly');
     const [selectedPlan, setSelectedPlan] = useState('')
+    const [basePrice, setBasePrice] = useState(getPriceForPlan('Monthly'))
     const filteredRegions = useMemo(() => filterRegionsByTab(selectedTab, regions), [selectedTab, regions]);
     const orderDetails = {
         serverName: "Premium Gaming Server",
         location: value,
         duration: selectedDuration || 0,
         specs: "8 vCPUs, 32GB RAM, 512GB SSD",
-        price: 89.99,
+        price: basePrice,
     }
     const [dedicatedIp, setDedicatedIp] = useState(false)
     const [cdn, setCdn] = useState(false)
     const [extraRam, setExtraRam] = useState(0)
 
-    const basePrice = 89.99
     const dedicatedIpPrice = 5.99
     const cdnPrice = 9.99
     const ramPrice = 2.99
@@ -115,14 +115,14 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
             <WidthWrapper className="">
 
 
-                <div className="flex flex-col lg:flex-row h-screen">
-                    <ScrollArea className="lg:w-[72%] pr-6">
+                <div className="flex flex-col lg:flex-row overflow-hidden ">
+                    <ScrollArea className="lg:w-[72%] pr-6  h-[89vh]">
                         <div className="">
                             {/* <div id="region" className="w-full lg:w-2/3 overflow-y-auto"> */}
                             <Tabs defaultValue="all" className="w-auto max-w-full" value={selectedTab} onValueChange={setSelectedTab}>
                                 <div className="pb-10 max-w-7xl text-left items-center relative w-full">
-                                    <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-20">
-                                        LOCATION
+                                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-14">
+                                        SELECT LOCATION
                                     </h1>
                                     <p className="mt-2 font-normal text-base dark:text-neutral-300">
                                         Select your desired location for the minimal ping.
@@ -203,21 +203,21 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
 
 
                                 <h2 className="text-2xl font-bold mb-4">Select Subscription Plan</h2>
-                                <RadioGroup defaultValue={selectedDuration} onValueChange={(e) => setSelectedDuration(e)} className="space-y-4">
+                                <RadioGroup defaultValue={selectedDuration} onValueChange={(e) => {setSelectedDuration(e); setBasePrice(getPriceForPlan(e))}} className="space-y-2">
                                     {durationsPlan.map((plan) => (
                                         <div
                                             key={plan.name}
-                                            className={`flex items-center space-x-4 border p-4 rounded-lg ${selectedDuration === plan.name ? 'border-gray-300' : 'border'
+                                            className={`flex items-center space-x-4 border p-3 rounded-lg ${selectedDuration === plan.name ? 'border-gray-300' : 'border'
                                                 }`}
                                         >
-                                            <RadioGroupItem value={plan.name} id={plan.name} className="w-6 h-6" />
+                                            <RadioGroupItem value={plan.name} id={plan.name} className="w-5 h-5" />
 
                                             <Label htmlFor={plan.name} className="flex-grow cursor-pointer">
                                                 <div className="flex justify-between items-center">
                                                     <div>
                                                         <span className="font-semibold text-lg">{plan.name}</span>
                                                         {plan.discount && (
-                                                            <Badge variant="secondary" className="ml-2">
+                                                            <Badge variant="secondary" className="ml-3">
                                                                 Save {plan.discount}
                                                             </Badge>
                                                         )}
@@ -240,7 +240,7 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
                                 </RadioGroup>
                             </div>
                             <div className="pb-10 max-w-7xl text-left items-center relative w-full">
-                                <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-20">
+                                <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-20">
                                     CONFIGURATBLE OPTIONS
                                 </h1>
                                 <p className="mt-2 font-normal text-base dark:text-neutral-300">

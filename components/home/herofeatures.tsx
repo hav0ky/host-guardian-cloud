@@ -41,8 +41,8 @@ const HeroFeatures: React.FC = () => {
         {games.map((game: Hero_Feature, index: number) => (
           <div
             key={index}
-            className={`w-full max-w-full bg-neutral-100 dark:bg-black sm:flex md:flex lg:flex xl:flex 2xl:flex md:visible border border-neutral-200/55 dark:border-neutral-900 shadow-lg rounded-lg flex-col md:flex-row 
-            transform transition-all duration-700 ease-out ${animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`} 
+            className={`w-full max-w-full bg-neutral-100 dark:bg-black sm:flex md:flex lg:flex xl:flex 2xl:flex md:visible border border-neutral-200/55 dark:border-neutral-900 shadow-lg rounded-lg flex-col md:flex-row hover:-translate-y-2
+            transform transition-all duration-7-00 ease-out ${animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`} 
             style={{ transitionDelay: `${index * 0.2}s` }}
           >
             {/* Left Section: Title & Subtitle */}
