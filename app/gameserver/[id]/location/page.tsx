@@ -256,7 +256,7 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center space-x-2">
                                                     <NetworkIcon className="h-4 w-4" />
-                                                    <Label htmlFor="dedicated-ip">Dedicated IP</Label>
+                                                    <Label htmlFor="dedicated-ip" className="text-lg font-semibold" >Dedicated IP</Label>
                                                 </div>
                                                 <Switch
                                                     id="dedicated-ip"
@@ -267,7 +267,7 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center space-x-2">
                                                     <CloudIcon className="h-4 w-4" />
-                                                    <Label htmlFor="cdn">CDN</Label>
+                                                    <Label htmlFor="cdn" className="text-lg font-semibold">CDN</Label>
                                                 </div>
                                                 <Switch
                                                     id="cdn"
@@ -275,17 +275,17 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
                                                     onCheckedChange={setCdn}
                                                 />
                                             </div>
-                                            <div className="space-y-2">
+                                            <div className="space-y-6">
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center space-x-2">
                                                         <MemoryStick className="h-4 w-4" />
-                                                        <Label>Extra RAM</Label>
+                                                        <Label className="text-lg font-semibold">Extra RAM</Label>
                                                     </div>
                                                     <span>{extraRam} GB</span>
                                                 </div>
 
                                                 <Select value={extraRam.toString()} onValueChange={(value: any) => setExtraRam(Number(value))}>
-                                                    <SelectTrigger className="w-full">
+                                                    <SelectTrigger className="w-full mt-20">
                                                         <SelectValue placeholder="Select RAM" />
                                                     </SelectTrigger>
                                                     <SelectContent>
