@@ -37,12 +37,12 @@ const HeroFeatures: React.FC = () => {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row justify-around gap-8 md:gap-16 my-6 pt-8">
+      <div className="w-full max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-16 my-6 pt-8 justify-items-center">
         {games.map((game: Hero_Feature, index: number) => (
           <div
             key={index}
-            className={`w-full max-w-full bg-neutral-100 dark:bg-black sm:flex md:flex lg:flex xl:flex 2xl:flex md:visible border border-neutral-200/55 dark:border-neutral-900 shadow-lg rounded-lg flex-col md:flex-row hover:-translate-y-2
-            transform transition-all duration-7-00 ease-out ${animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`} 
+            className={`w-full max-w-full bg-neutral-100 dark:bg-black sm:flex md:flex md:flex-row  lg:flex xl:flex 2xl:flex md:visible border border-neutral-200/55 dark:border-neutral-900 shadow-lg rounded-lg flex-col hover:-translate-y-2
+            transform transition-all duration-7-00 ease-out ${animate ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}
             style={{ transitionDelay: `${index * 0.2}s` }}
           >
             {/* Left Section: Title & Subtitle */}

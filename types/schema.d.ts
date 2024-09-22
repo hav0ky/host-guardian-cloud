@@ -134,3 +134,20 @@ interface DB_Server {
     ip: string;
     port: number;
 }
+
+interface DB_GameServerFeatures { 
+    id: string;
+    featurename: string;
+    iconname: string;
+    description:string;
+    game_id: number;
+}
+
+export type GameServer = {
+    id: string;
+    name: string;
+    description: string;
+    background: string;
+    image: string;
+    planprice: number;
+};

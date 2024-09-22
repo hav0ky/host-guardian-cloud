@@ -116,18 +116,19 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
 
 
                 <div className="flex flex-col lg:flex-row overflow-hidden ">
-                    <ScrollArea className="lg:w-[72%] pr-6  h-[89vh]">
-                        <div className="">
+                    <ScrollArea className="lg:w-[72%] lg:pr-6 h-[89vh]">
+                        <div className="pb-10 max-w-7xl text-left items-center relative border w-full">
+                                        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-14">
+                                            SELECT LOCATION
+                                        </h1>
+                                        <p className="mt-2 font-normal text-base dark:text-neutral-300">
+                                            Select your desired location for the minimal ping.
+                                        </p>
+                                    </div>
+                            <div className="">
                             {/* <div id="region" className="w-full lg:w-2/3 overflow-y-auto"> */}
                             <Tabs defaultValue="all" className="w-auto max-w-full" value={selectedTab} onValueChange={setSelectedTab}>
-                                <div className="pb-10 max-w-7xl text-left items-center relative w-full">
-                                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-14">
-                                        SELECT LOCATION
-                                    </h1>
-                                    <p className="mt-2 font-normal text-base dark:text-neutral-300">
-                                        Select your desired location for the minimal ping.
-                                    </p>
-                                </div>
+                               
                                 <TabsList className="justify-start inline-flex space-x-2 overflow-x-auto whitespace-nowrap h-full">
                                     <TabsTrigger value="all">All</TabsTrigger>
                                     <TabsTrigger value="asia">Asia</TabsTrigger>
