@@ -117,7 +117,7 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
 
                 <div className="flex flex-col lg:flex-row overflow-hidden ">
                     <ScrollArea className="lg:w-[72%] lg:pr-6 h-[89vh]">
-                        <div className="pb-10 max-w-7xl text-left items-center relative border w-full">
+                        <div className="pb-10 max-w-7xl text-left items-center relative w-full">
                                         <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-14">
                                             SELECT LOCATION
                                         </h1>
