@@ -151,7 +151,7 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
                                                 <RadioGroup
                                                     defaultValue={value}
                                                     onValueChange={(e) => SetValue(e)}
-                                                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                                                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4"
                                                 >
                                                     {filteredRegions.map((region) => (
                                                         <div key={region.id} className="relative">

@@ -12,12 +12,11 @@ export function SiteHeader() {
                 </div> */}
                 <div className="flex items-center">
                     <Link href="/" className="flex-shrink-0 flex items-center text-xl tracking-wider select-none">
-                        <span className="text-primary z-10">cloud</span>
-                        .
-                        <span className="text-primary/75">cc</span>
+                        <span className="text-primary z-10">Home</span>
+                        {/* .
+                        <span className="text-primary/75">cc</span> */}
                     </Link>
                     {/* <Navbar /> */}
-                    {/* <ThemeToggle /> */}
                 </div>
                 <div className="flex flex-1 items-center space-x-2 justify-end">
                     <ModeToggle />
