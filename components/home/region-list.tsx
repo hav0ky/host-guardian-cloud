@@ -13,7 +13,7 @@ const server_options: { title: string; href: string; description: string }[] = [
     },
     {
         title: "Minecraft",
-        href: "/servers/minecraft",
+        href: "/servers/mine",
         description:
             "Enhance your Minecraft world with our high-performance servers.",
     },

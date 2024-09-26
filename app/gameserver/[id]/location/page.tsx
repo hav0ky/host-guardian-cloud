@@ -78,7 +78,7 @@ const durationsPlan: DurationPlan[] = [
     { name: "Yearly", discount: "30%", billingFrequency: "per year" },
 ]
 
-export default function ConfigPage({ params }: { params: { plan: string } }) {
+export default function ConfigPage() {
     const [value, SetValue] = useState("Mumbai")
 
     const search = useSearchParams()
@@ -108,7 +108,7 @@ export default function ConfigPage({ params }: { params: { plan: string } }) {
         (cdn ? cdnPrice : 0) +
         (extraRam * ramPrice)
 
-    if (plan === "Basic Plan" || plan === "performance" || plan === "extreme") {
+    if (plan === "Basic Plan" || plan === "Pro Plan" || plan === "Ultimate Plan" || plan === "Best Plan") {
         return (
             // <div className="bg-zinc-900">
 
