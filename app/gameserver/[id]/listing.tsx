@@ -52,12 +52,18 @@ const GameServerListing = ({ data, index }: ProductListingProps) => {
     if (!isVisible) return <ProductPlaceholder />
 
     return (
-        <Link
+        // <Link
+        //     className={cn(
+        //         'invisible h-full w-full cursor-pointer group/main',
+        //         isVisible && 'visible animate-in fade-in-5'
+        //     )}
+        //     href={`/gameserver/${data.game_id}/location?plan=${data.name}`}>
+        <div
             className={cn(
                 'invisible h-full w-full cursor-pointer group/main',
                 isVisible && 'visible animate-in fade-in-5'
             )}
-            href={`/gameserver/${data.game_id}/location?plan=${data.name}`}>
+        >
             {data.name != "Best Plans" ? <Card className="w-[340px] dark:bg-zinc-900 text-center mx-auto border rounded-md overflow-hidden shadow-lg hover:border-white">
                 <CardHeader>
                     <CardTitle>{data.name}</CardTitle>
@@ -76,7 +82,13 @@ const GameServerListing = ({ data, index }: ProductListingProps) => {
                 </CardContent>
                 <CardFooter>
                     <Link
-                        href={`/gameserver/${data.game_id}/location?plan=${data.name.trim()}`}
+                        href={{
+                            pathname: `/gameserver/${data.game_id}/location`,
+                            query: {
+                                plan: data.name,
+                                id: data.game_id
+                            }
+                        }}
                         className={cn(buttonVariants({ variant: 'default' }), "mx-auto w-full")}>
                         Select
                     </Link>
@@ -84,11 +96,11 @@ const GameServerListing = ({ data, index }: ProductListingProps) => {
             </Card> : null}
 
             {/* Popular plan */}
-            {data.name == "Best Plans" ?
+            {/* {data.name == "Best Plans" ?
                 <Card className="w-[340px] bg-zinc-800 mt-10 text-center mx-auto border border-teal-500">
                     <CardHeader>
-                    <CardTitle>{data.name}</CardTitle>
-                    <CardDescription>{data.description}</CardDescription>
+                        <CardTitle>{data.name}</CardTitle>
+                        <CardDescription>{data.description}</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className='absolute left-0 right-0 mx-auto -mt-[140px] w-32 rounded-full bg-gradient-to-r from-blue-600 to-teal-500 px-3 py-2 text-sm font-medium text-white'>
@@ -106,16 +118,25 @@ const GameServerListing = ({ data, index }: ProductListingProps) => {
                     </CardContent>
                     <CardFooter>
                         <Link
-                            href={`/gameserver/${data.game_id}/location?plan=${data.name.trim()}`}
+                            href={{
+                                pathname: `/gameserver/${data.game_id}/location`,
+                                query: {
+                                    plan: data.name,
+                                    price: data.price,
+                                    id: data.game_id
+                                }
+                            }}
                             className={cn(buttonVariants({
                                 variant: 'accent',
                             }), "mx-auto w-full")}>
                             Select
                         </Link>
+
                     </CardFooter>
-                </Card> : null}
+                </Card> : null} */}
             {/* </div> */}
-        </Link>
+        </div>
+        // </Link>
     )
 }
 

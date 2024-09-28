@@ -15,6 +15,7 @@ import axios from "axios";
 import { Skeleton } from "../ui/skeleton";
 import debounce from 'lodash/debounce';
 import { apiConfig } from "@/app/config/apiconfig";
+import { LoadingSpinner } from "../ui/loader";
 
 const HeroFeatures = dynamic(() => import("./herofeatures"), { loading: () => <Skeleton />, ssr: false });
 const GameServers = dynamic(() => import("./gamelist"), { loading: () => <Skeleton />, ssr: false });
@@ -90,17 +91,17 @@ const GameServersPage = () => {
   return (
     <>
       {loadData ? (
-        <ProductPlaceholder />
+          <LoadingSpinner />
       ) : (
         <main className="outer relative w-full border rounded-xl flex-grow flex flex-col items-center justify-center dark:bg-neutral-900 text-white overflow-hidden">
-          <div
+          {/* <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
               backgroundImage: `url('/game_server_bg.jpg')`,
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }}
-          ></div>
+          ></div> */}
 
           <Carousel
             plugins={[
@@ -143,5 +144,7 @@ const ProductPlaceholder = () => {
     </div>
   )
 }
+
+
 
 export default GameServersPage;

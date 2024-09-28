@@ -1,9 +1,11 @@
 import type { ResultSetHeader, RowDataPacket } from 'mysql2';
-import type { DB_GameServer, DB_GameServerFeatures, DB_GameServerPricing } from '@/types/schema'; // Assuming you have these types defined
+import type { DB_GameServer, DB_GameServerFeatures, DB_GameServerPricing, GamePlans, DB_PanelUsers } from '@/types/schema'; // Assuming you have these types defined
 import db from './mysql';
 
 interface DB_GameServerDB extends DB_GameServer, RowDataPacket { }
 interface DB_GameServerPricingDB extends DB_GameServerPricing, RowDataPacket { }
+interface GamePlansDB extends GamePlans, RowDataPacket { }
+interface DB_PanelUser extends DB_PanelUsers, RowDataPacket { }
 
 const GameServerProducts = {
     getAll: async (): Promise<DB_GameServer[]> => {
@@ -114,6 +116,60 @@ const GameServerProducts = {
             return null;
         }
     },
+
+    getPlanById: async (gameserverId: string, plan: string): Promise<GamePlansDB | null> => {
+        try {
+            const [rows] = await db.query<GamePlansDB[]>('SELECT * FROM `p_gameserver_pricing` WHERE game_id = ? AND name = ?', [gameserverId, plan]);
+            if (!rows.length) return null;
+            const gamePlans = rows[0];
+            const [serverRows] = await db.query<DB_GameServerDB[]>('SELECT * FROM p_gameserver WHERE id = ?', [gameserverId]);
+            const gameServer = serverRows.length ? serverRows[0] : null;
+            gamePlans.gameServer = gameServer;
+            if (gamePlans.versions) gamePlans.versions = (gamePlans.versions as unknown as string).split(',');
+            console.log(gamePlans, "ftat")
+
+            return gamePlans;
+        } catch (err) {
+            console.log(err, "ftat")
+
+            console.log(`[DB] Error while getting game plans by ID: ${err}`);
+            return null;
+        }
+    },
+
+    getPanelUserByEmail: async (email: string): Promise<DB_PanelUser | null> => {
+        try {
+            const [rows] = await db.query<DB_PanelUser[]>('SELECT * FROM `panel_users` WHERE id = ?', [email]);
+            if (!rows.length) return null;
+
+            const dbProduct = rows[0];
+            if (dbProduct.versions) dbProduct.versions = (dbProduct.versions as unknown as string).split(',');
+            return dbProduct;
+        } catch (err) {
+            console.log(`[DB] Error while getting gameserver by ID: ${err}`);
+            return null;
+        }
+    },
+
+
+    createPanelUser: async (props: Partial<DB_PanelUser>): Promise<number | null> => {
+        try {
+            const keys = Object.keys(props);
+            const values = Object.values(props);
+
+            const [rows] = await db.query<ResultSetHeader>(
+                `INSERT INTO panel_users (${keys.join(', ')}, created_at) VALUES (${keys.map(() => '?').join(', ')}, NOW())`,
+                values
+            );
+            return rows.insertId;
+        } catch (err) {
+            console.log(`[DB] Error while creating database: ${err}`);
+            return null;
+        }
+    },
+
+
+
 
     // getPricingByDatabaseId: async (databaseId: string): Promise<DB_Pricing[]> => {
     //     try {

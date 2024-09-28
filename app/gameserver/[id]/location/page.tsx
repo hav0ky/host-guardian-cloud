@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useEffect, useMemo, useState } from "react";
-import { cn } from "@/lib/utils";
+import { cn, durationsPlan, filterRegionsByTab, getDescriptionForPlan, getPriceForPlan } from "@/lib/utils";
 import { Label } from "@/components/ui/label"
 import ReactCountryFlag from "react-country-flag";
 import NotFound from "@/app/not-found";
@@ -20,85 +20,47 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-
-
-const filterRegionsByTab = (tabValue: string, regions: Region[]): Region[] => {
-    switch (tabValue) {
-        case 'all':
-            return regions;
-        case 'asia':
-            return regions.filter(region => region.region === 'Asia');
-        case 'europe':
-            return regions.filter(region => region.region === 'Europe');
-        case 'americas':
-            return regions.filter(region => region.region === 'North America' || region.region === 'South America');
-        case 'middle-east':
-            return regions.filter(region => region.region === 'Middle East');
-        case 'oceania':
-            return regions.filter(region => region.region === 'Oceania');
-        default:
-            return [];
-    }
-};
-
-const getPriceForPlan = (plan: string) => {
-    switch (plan) {
-        case "Monthly":
-            return 10.00;
-        case "Quarterly":
-            return 25.00;
-        case "Half-Yearly":
-            return 45.00;
-        case "Yearly":
-            return 80.00;
-        default:
-            return 0.00;
-    }
-};
-
-const getDescriptionForPlan = (plan: string) => {
-    switch (plan) {
-        case "Monthly":
-            return "Billed every month. Cancel anytime.";
-        case "Quarterly":
-            return "Billed every 3 months. Save 10%.";
-        case "Half-Yearly":
-            return "Billed every 6 months. Save 20%.";
-        case "Yearly":
-            return "Billed annually. Best value with 30% savings.";
-        default:
-            return "Select a plan.";
-    }
-};
-
-const durationsPlan: DurationPlan[] = [
-    { name: "Monthly", discount: null, billingFrequency: "per month" },
-    { name: "Quarterly", discount: "10%", billingFrequency: "every 3 months" },
-    { name: "Half-Yearly", discount: "20%", billingFrequency: "every 6 months" },
-    { name: "Yearly", discount: "30%", billingFrequency: "per year" },
-]
+import { useSession } from "@/app/providers";
+import axios from "axios";
+import { apiConfig } from "@/app/config/apiconfig";
+import { gameEggsData } from "@/app/config/gameversionlist";
+import { LoadingSpinner } from "@/components/ui/loader";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function ConfigPage() {
-    const [value, SetValue] = useState("Mumbai")
+    const [value, SetValue] = useState("Mumbai");
 
     const search = useSearchParams()
-    const plan: string = search.get('plan') || "none"
+    const g_id: string = search.get('id') || "none"
+    const searchParams = useSearchParams();
+
+    const plan : string = searchParams.get('plan')  || "none";
+    const game_id: string = searchParams.get('id')  || "none";
+
+
     const [selectedTab, setSelectedTab] = useState('all');
     const [selectedDuration, setSelectedDuration] = useState('Monthly');
     const [selectedPlan, setSelectedPlan] = useState('')
     const [basePrice, setBasePrice] = useState(getPriceForPlan('Monthly'))
+
+    const [serverData, setServerData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null || '');
+
+    const [loadingOrder, setLoadingOrder] = useState(false);
+    const [errorOrder, setErrorOrder] = useState<string | null>(null);
+    const [successOrder, setSuccessOrder] = useState(false);
+
     const filteredRegions = useMemo(() => filterRegionsByTab(selectedTab, regions), [selectedTab, regions]);
     const orderDetails = {
-        serverName: "Premium Gaming Server",
+        serverName: serverData?.gameServer?.name,
         location: value,
         duration: selectedDuration || 0,
-        specs: "8 vCPUs, 32GB RAM, 512GB SSD",
         price: basePrice,
     }
     const [dedicatedIp, setDedicatedIp] = useState(false)
     const [cdn, setCdn] = useState(false)
     const [extraRam, setExtraRam] = useState(0)
-
     const dedicatedIpPrice = 5.99
     const cdnPrice = 9.99
     const ramPrice = 2.99
@@ -106,29 +68,98 @@ export default function ConfigPage() {
     const totalPrice = basePrice +
         (dedicatedIp ? dedicatedIpPrice : 0) +
         (cdn ? cdnPrice : 0) +
-        (extraRam * ramPrice)
+        (extraRam * ramPrice);
 
-    if (plan === "Basic Plan" || plan === "Pro Plan" || plan === "Ultimate Plan" || plan === "Best Plan") {
+
+    useEffect(() => {
+        const fetchGamePlan = async () => {
+            try {
+                const response = await axios.get(apiConfig.urls.getGamePlaneById, {
+                    params: {
+                        game_id: game_id,
+                        planName: plan,
+                    },
+                });
+                setServerData(response.data);
+                console.log('Plan:', response.data);
+
+                setLoading(false);
+            } catch (err) {
+                setError('Error fetching game plan');
+                setLoading(false);
+            }
+        };
+
+        fetchGamePlan();
+    }, []);
+
+    const findGameConfig = (gameEggsData: Record<string, any>[], gameId: string): any => {
+        const foundGame = gameEggsData.find(game => game[gameId]);
+        return foundGame ? foundGame[gameId] : null;
+    };
+
+    const gameData = findGameConfig(gameEggsData, game_id);
+    const prepareServerData = (gameEggsData: any, serverPlan: any) => {
+        const combinedData = {
+            ...gameEggsData,
+            limits: {
+                cpu: serverPlan?.cpu * 100,
+                memory: serverPlan?.ram,
+                disk: serverPlan?.disk,
+                swap: 0
+            },
+            allocation: {
+                default: 2
+            },
+            name: serverPlan?.name
+        };
+
+        return combinedData;
+    };
+    const finalGameData = prepareServerData(gameData, serverData);
+    const handleConfirmOrder = async () => {
+        setLoadingOrder(true);
+        setErrorOrder(null);
+        setSuccessOrder(false);
+        const orderData =  prepareServerData(gameData, serverData);
+        console.log("Sending data:", orderData);
+
+        try {
+            const response = await axios.post(apiConfig.urls.createServer,orderData);
+            if (response.status === 200) {
+                setSuccessOrder(true);
+                console.log('Order confirmed:', response.data);
+            }
+        } catch (err) {
+            console.error('Error confirming order:', err);
+            setErrorOrder('Failed to confirm the order. Please try again.');
+        } finally {
+            setLoadingOrder(false);
+        }
+    };
+
+    if (loading) {
+        return (<LoadingSpinner />)
+    }
+    else if (plan === "Basic Plan" || plan === "Pro Plan" || plan === "Ultimate Plan" || plan === "Best Plan") {
         return (
             // <div className="bg-zinc-900">
 
             <WidthWrapper className="">
-
-
                 <div className="flex flex-col lg:flex-row overflow-hidden ">
                     <ScrollArea className="lg:w-[72%] lg:pr-6 h-[89vh]">
                         <div className="pb-10 max-w-7xl text-left items-center relative w-full">
-                                        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-14">
-                                            SELECT LOCATION
-                                        </h1>
-                                        <p className="mt-2 font-normal text-base dark:text-neutral-300">
-                                            Select your desired location for the minimal ping.
-                                        </p>
-                                    </div>
-                            <div className="">
+                            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-b dark:from-neutral-50 dark:to-neutral-400 from-neutral-700 to-neutral-800 bg-opacity-50 pt-14">
+                                SELECT LOCATION
+                            </h1>
+                            <p className="mt-2 font-normal text-base dark:text-neutral-300">
+                                Select your desired location for the minimal ping.
+                            </p>
+                        </div>
+                        <div className="">
                             {/* <div id="region" className="w-full lg:w-2/3 overflow-y-auto"> */}
                             <Tabs defaultValue="all" className="w-auto max-w-full" value={selectedTab} onValueChange={setSelectedTab}>
-                               
+
                                 <TabsList className="justify-start inline-flex space-x-2 overflow-x-auto whitespace-nowrap h-full">
                                     <TabsTrigger value="all">All</TabsTrigger>
                                     <TabsTrigger value="asia">Asia</TabsTrigger>
@@ -153,7 +184,7 @@ export default function ConfigPage() {
                                                     onValueChange={(e) => SetValue(e)}
                                                     className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4"
                                                 >
-                                                    {filteredRegions.map((region) => (
+                                                    {filteredRegions.map((region: any) => (
                                                         <div key={region.id} className="relative">
                                                             <RadioGroupItem value={region.city} id={region.city} className="peer sr-only" />
                                                             <Label
@@ -204,7 +235,7 @@ export default function ConfigPage() {
 
 
                                 <h2 className="text-2xl font-bold mb-4">Select Subscription Plan</h2>
-                                <RadioGroup defaultValue={selectedDuration} onValueChange={(e) => {setSelectedDuration(e); setBasePrice(getPriceForPlan(e))}} className="space-y-2">
+                                <RadioGroup defaultValue={selectedDuration} onValueChange={(e) => { setSelectedDuration(e); setBasePrice(getPriceForPlan(e)) }} className="space-y-2">
                                     {durationsPlan.map((plan) => (
                                         <div
                                             key={plan.name}
@@ -344,7 +375,7 @@ export default function ConfigPage() {
                             <div className="flex items-center space-x-4">
                                 <ServerIcon className="h-6 w-6 text-primary" />
                                 <div>
-                                    <p className="font-medium">{orderDetails.serverName}</p>
+                                    <p className="font-medium">{orderDetails.serverName?.toUpperCase()}</p>
                                     <p className="text-sm text-muted-foreground">Selected Server</p>
                                 </div>
                             </div>
@@ -369,7 +400,7 @@ export default function ConfigPage() {
                                         <CpuIcon className="h-4 w-4 text-muted-foreground" />
                                         <span className="text-sm">Specifications</span>
                                     </div>
-                                    <span className="text-sm font-medium">{orderDetails.specs}</span>
+                                    <span className="text-sm font-medium">{`${serverData?.cpu} vCPUs,  ${serverData?.ram}GB RAM, ${serverData?.disk}GB DISK`}</span>
                                 </div>
                             </div>
                             <DropdownMenuSeparator />
@@ -404,10 +435,31 @@ export default function ConfigPage() {
                             </div>
                         </CardContent>
                         <CardFooter>
-                            <Button className="w-full">Confirm Order</Button>
+                                <Button
+                                    className="w-full"
+                                    onClick={handleConfirmOrder}
+                                    disabled={loading}
+                                >
+                                    {loadingOrder ? 'Confirming...' : 'Confirm Order'}
+                                </Button>
                         </CardFooter>
                     </Card>
                 </div>
+                {/* Error Alert */}
+                {errorOrder && (
+                    <Alert variant="destructive">
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                )}
+
+                {/* Success Alert */}
+                {successOrder && (
+                    <Alert variant="default">
+                        <AlertTitle>Success</AlertTitle>
+                        <AlertDescription>Order confirmed successfully!</AlertDescription>
+                    </Alert>
+                )}
             </WidthWrapper >
         )
     } else {

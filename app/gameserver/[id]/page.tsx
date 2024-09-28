@@ -9,8 +9,8 @@ import { HoverEffect } from "@/components/ui/card-hover-effect"
 
 const GamePage = async ({ params }: { params: { id: string } }) => {
     const data = await query.gameservers.getGameServerWithPricingById(params.id)
+
     const featureData = await query.gameservers.getGameFeatures(params.id);
-    console.log(featureData?.features)
     if (!data) {
         redirect('/')
     }

@@ -1,5 +1,5 @@
-const data = [{
-    Mine: {
+export const gameEggsData = [{
+    minecraft: {
         docker_image: "ghcr.io/pterodactyl/yolks:java_21",
         startup: "java -Xms128M -XX:MaxRAMPercentage=95.0 -jar server.jar",
         node: 1,
@@ -12,8 +12,7 @@ const data = [{
             STARTUP: "java -Xms128M -XX:MaxRAMPercentage=95.0 -jar server.jar"
         },
     },
-
-    arc: {
+    ark: {
         docker_image: "quay.io/parkervcp/pterodactyl-images:debian_source",
         startup: "rmv() { echo -e \"stopping server\"; rcon -t rcon -a 127.0.0.1:${RCON_PORT} -p ${ARK_ADMIN_PASSWORD} -c saveworld && rcon -a 127.0.0.1:${RCON_PORT} -p ${ARK_ADMIN_PASSWORD} -c DoExit; }; trap rmv 15; cd ShooterGame/Binaries/Linux && ./ShooterGameServer {{SERVER_MAP}}?listen?SessionName=\"{{SESSION_NAME}}\"?ServerPassword={{ARK_PASSWORD}}?ServerAdminPassword={{ARK_ADMIN_PASSWORD}}?Port={{SERVER_PORT}}?RCONPort={{RCON_PORT}}?QueryPort={{QUERY_PORT}}?RCONEnabled=True$( [ \"$BATTLE_EYE\" == \"1\" ] || printf %s ' -NoBattlEye' ) -server {{ARGS}} -log & until echo \"waiting for rcon connection...\"; rcon -t rcon -a 127.0.0.1:${RCON_PORT} -p ${ARK_ADMIN_PASSWORD}; do sleep 5; done",
         environment: {
@@ -33,8 +32,12 @@ const data = [{
         allocation: 1,
         nest: 1,
         egg: 1,
+        feature_limits: {
+            databases: 0,
+            backups: 0
+        },
     },
-    csgo: {
+    cs2: {
         docker_image: "ghcr.io/pterodactyl/games:source",
         startup: "./srcds_run -game csgo -console -port {{SERVER_PORT}} +ip 0.0.0.0 +map {{SRCDS_MAP}} -strictportbind -norestart +sv_setsteamaccount {{STEAM_ACC}}",
         environment: {
@@ -47,6 +50,10 @@ const data = [{
         allocation: 1,
         nest: 1,
         egg: 1,
+        feature_limits: {
+            databases: 0,
+            backups: 0
+        },
     },
     rust: {
         docker_image: "ghcr.io/pterodactyl/games:rust",
@@ -75,6 +82,10 @@ const data = [{
         allocation: 1,
         nest: 1,
         egg: 1,
+        feature_limits: {
+            databases: 0,
+            backups: 0
+        },
     }
 }]
 
