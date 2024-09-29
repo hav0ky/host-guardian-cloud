@@ -1,18 +1,19 @@
 import { NextResponse } from 'next/server';
 import query from '@/lib/db';
 
-export async function POST(req: Request) {
+export async function POST(request: Request, response: Response) {
     try {
-        const data = await req.json();
-        const { username, email, first_name, last_name, language, root_admin, password } = data;
+        console.log("GOT THE DATA", request.json())
+        const data = await request.json();
+        const { username, email,password } = data;
 
         if (!username || !email || !password) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
-        const [existingUser] = await query.gameservers.getPanelUserByEmail(email);
-        if (existingUser.length > 0) {
-            return NextResponse.json({ error: 'User already exists' }, { status: 409 });
-        }
+        // const [existingUser] = await query.gameservers.getPanelUserByEmail(email);
+        // if (existingUser.length > 0) {
+        //     return NextResponse.json({ error: 'User already exists' }, { status: 409 });
+        // }
 
         const [result] = await query.gameservers.createPanelUser(data)
 

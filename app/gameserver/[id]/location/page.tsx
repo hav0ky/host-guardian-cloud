@@ -106,7 +106,8 @@ export default function ConfigPage() {
                 cpu: serverPlan?.cpu * 100,
                 memory: serverPlan?.ram,
                 disk: serverPlan?.disk,
-                swap: 0
+                swap: 0,
+                io: 500,
             },
             allocation: {
                 default: 2
@@ -116,7 +117,6 @@ export default function ConfigPage() {
 
         return combinedData;
     };
-    const finalGameData = prepareServerData(gameData, serverData);
     const handleConfirmOrder = async () => {
         setLoadingOrder(true);
         setErrorOrder(null);
@@ -126,7 +126,7 @@ export default function ConfigPage() {
 
         try {
             const response = await axios.post(apiConfig.urls.createServer,orderData);
-            if (response.status === 200) {
+            if (response.status == 201) {
                 setSuccessOrder(true);
                 console.log('Order confirmed:', response.data);
             }

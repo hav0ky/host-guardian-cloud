@@ -139,12 +139,12 @@ const GameServerProducts = {
 
     getPanelUserByEmail: async (email: string): Promise<DB_PanelUser | null> => {
         try {
-            console.log("CHECKED", email)
 
             const [rows] = await db.query<DB_PanelUser[]>('SELECT * FROM `panel_users` WHERE email = ?', [email]);
+
             if (!rows.length) return null;
             const userData = rows[0];
-            console.log("CHECKED", userData)
+            console.log(userData,"HEEEE")
 
             if (userData.versions) userData.versions = (userData.versions as unknown as string).split(',');
             return userData;

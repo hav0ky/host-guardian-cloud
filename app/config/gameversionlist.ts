@@ -2,14 +2,18 @@ export const gameEggsData = [{
     minecraft: {
         docker_image: "ghcr.io/pterodactyl/yolks:java_21",
         startup: "java -Xms128M -XX:MaxRAMPercentage=95.0 -jar server.jar",
-        node: 1,
+        // node: 1,
         allocation: 1,
-        nest: 1,
+        // nest: 1,
         egg: 1,
         environment: {
             SPONGE_VERSION: "1.12.2-7.3.0",
             SERVER_JARFILE: "server.jar",
             STARTUP: "java -Xms128M -XX:MaxRAMPercentage=95.0 -jar server.jar"
+        },
+        feature_limits: {
+            databases: 0,
+            backups: 0
         },
     },
     ark: {
@@ -28,9 +32,8 @@ export const gameEggsData = [{
             ARGS: "",
             STARTUP: "rmv() { echo -e \"stopping server\"; rcon -t rcon -a 127.0.0.1:${RCON_PORT} -p ${ARK_ADMIN_PASSWORD} -c saveworld && rcon -a 127.0.0.1:${RCON_PORT} -p ${ARK_ADMIN_PASSWORD} -c DoExit; }; trap rmv 15; cd ShooterGame/Binaries/Linux && ./ShooterGameServer {{SERVER_MAP}}?listen?SessionName=\"{{SESSION_NAME}}\"?ServerPassword={{ARK_PASSWORD}}?ServerAdminPassword={{ARK_ADMIN_PASSWORD}}?Port={{SERVER_PORT}}?RCONPort={{RCON_PORT}}?QueryPort={{QUERY_PORT}}?RCONEnabled=True$( [ \"$BATTLE_EYE\" == \"1\" ] || printf %s ' -NoBattlEye' ) -server {{ARGS}} -log & until echo \"waiting for rcon connection...\"; rcon -t rcon -a 127.0.0.1:${RCON_PORT} -p ${ARK_ADMIN_PASSWORD}; do sleep 5; done",
         },
-        node: 1,
+     
         allocation: 1,
-        nest: 1,
         egg: 1,
         feature_limits: {
             databases: 0,
@@ -46,9 +49,7 @@ export const gameEggsData = [{
             SRCDS_APPID: "740",
             STARTUP: "./srcds_run -game csgo -console -port {{SERVER_PORT}} +ip 0.0.0.0 +map {{SRCDS_MAP}} -strictportbind -norestart +sv_setsteamaccount {{STEAM_ACC}}",
         },
-        node: 1,
         allocation: 1,
-        nest: 1,
         egg: 1,
         feature_limits: {
             databases: 0,
@@ -78,9 +79,7 @@ export const gameEggsData = [{
             MAP_URL: "",
             STARTUP: "./RustDedicated -batchmode +server.port {{SERVER_PORT}} +server.queryport {{QUERY_PORT}} +server.identity \"rust\" +rcon.port {{RCON_PORT}} +rcon.web true +server.hostname \\\"{{HOSTNAME}}\\\" +server.level \\\"{{LEVEL}}\\\" +server.description \\\"{{DESCRIPTION}}\\\" +server.url \\\"{{SERVER_URL}}\\\" +server.headerimage \\\"{{SERVER_IMG}}\\\" +server.logoimage \\\"{{SERVER_LOGO}}\\\" +server.maxplayers {{MAX_PLAYERS}} +rcon.password \\\"{{RCON_PASS}}\\\" +server.saveinterval {{SAVEINTERVAL}} +app.port {{APP_PORT}}  $( [ -z ${MAP_URL} ] && printf %s \"+server.worldsize \\\"{{WORLD_SIZE}}\\\" +server.seed \\\"{{WORLD_SEED}}\\\"\" || printf %s \"+server.levelurl {{MAP_URL}}\" ) {{ADDITIONAL_ARGS}}",
         },
-        node: 1,
         allocation: 1,
-        nest: 1,
         egg: 1,
         feature_limits: {
             databases: 0,

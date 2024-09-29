@@ -2,16 +2,15 @@ import React from "react";
 import axios from 'axios';
 
 const baseUrl = 'https://newpanel.cs2hvh.com/api/application'
-export const nodesID = process.env.NODE_ENV; 
+export const nodesID = process.env.NODE_ID; 
 
 export const apiConfig = {
     urls: {
-      getGameServers: '/api/auth/gameserver',
+      getGameServers: '/api/auth/gameserver/allgameserver',
       postLogin: '/api/auth/login',
       createServer: '/api/auth/gameserver/createserver',
       getGamePlaneById: '/api/auth/gameserver/plans/',
       createPanelUserDB: '/api/auth/gameserver/createpaneluser',
-
     },
 
     thirdparty:{
