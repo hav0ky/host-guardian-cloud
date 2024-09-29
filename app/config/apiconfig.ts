@@ -1,4 +1,5 @@
 import React from "react";
+import axios from 'axios';
 
 const baseUrl = 'https://newpanel.cs2hvh.com/api/application'
 export const nodesID = process.env.NODE_ENV; 
@@ -8,7 +9,9 @@ export const apiConfig = {
       getGameServers: '/api/auth/gameserver',
       postLogin: '/api/auth/login',
       createServer: '/api/auth/gameserver/createserver',
-      getGamePlaneById: '/api/auth/gameserver/plans/'
+      getGamePlaneById: '/api/auth/gameserver/plans/',
+      createPanelUserDB: '/api/auth/gameserver/createpaneluser',
+
     },
 
     thirdparty:{
@@ -20,3 +23,30 @@ export const apiConfig = {
       createUser: `${baseUrl}/users`
     } 
   };
+
+
+
+
+export const createPanelUserTD = async (userData: any) => {
+    try {
+        const response = await axios.post(apiConfig.thirdparty.createUser, userData, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.PT_TOKEN_SECRET}`,
+            },
+        });
+        return response; 
+    } catch (error: any) {
+        if (error.response) {
+            return {
+                status: error.response.status,
+                message: error.response.data,
+            };
+        } else {
+            return {
+                status: 500,
+                message: 'Server error',
+            };
+        }
+    }}

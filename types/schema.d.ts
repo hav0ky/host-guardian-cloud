@@ -175,17 +175,6 @@ export interface DB_PanelUsers {
     updated_at: string;
     user_id: number;
     root_admin: boolean;
+   '2fa' : boolean;
+    external_id: string;
 }
-
-id: 4,
-external_id: null,
-uuid: '9da28a9f-8cc8-4fe4-833d-a6f57f25c77d',
-username: 'test',
-email: 'test@mm.com',
-first_name: 'test',
-last_name: 'test',
-language: 'en',
-root_admin: false,
-
-created_at: '2024-09-28T21:27:57+00:00',
-updated_at: '2024-09-28T21:27:57+00:00'

@@ -139,12 +139,15 @@ const GameServerProducts = {
 
     getPanelUserByEmail: async (email: string): Promise<DB_PanelUser | null> => {
         try {
-            const [rows] = await db.query<DB_PanelUser[]>('SELECT * FROM `panel_users` WHERE id = ?', [email]);
-            if (!rows.length) return null;
+            console.log("CHECKED", email)
 
-            const dbProduct = rows[0];
-            if (dbProduct.versions) dbProduct.versions = (dbProduct.versions as unknown as string).split(',');
-            return dbProduct;
+            const [rows] = await db.query<DB_PanelUser[]>('SELECT * FROM `panel_users` WHERE email = ?', [email]);
+            if (!rows.length) return null;
+            const userData = rows[0];
+            console.log("CHECKED", userData)
+
+            if (userData.versions) userData.versions = (userData.versions as unknown as string).split(',');
+            return userData;
         } catch (err) {
             console.log(`[DB] Error while getting gameserver by ID: ${err}`);
             return null;
@@ -158,7 +161,7 @@ const GameServerProducts = {
             const values = Object.values(props);
 
             const [rows] = await db.query<ResultSetHeader>(
-                `INSERT INTO panel_users (${keys.join(', ')}, created_at) VALUES (${keys.map(() => '?').join(', ')}, NOW())`,
+                `INSERT INTO panel_users (${keys.join(', ')}) VALUES (${keys.map(() => '?').join(', ')})`,
                 values
             );
             return rows.insertId;

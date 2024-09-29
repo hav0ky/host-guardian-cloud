@@ -1,44 +1,52 @@
-import { apiConfig, nodesID } from '@/app/config/apiconfig';
+import { apiConfig, createPanelUser, nodesID } from '@/app/config/apiconfig';
 import { validateRequest } from '@/lib/auth';
+import query from '@/lib/db';
 import axios from 'axios';
 export async function POST(request: Request, response: Response) {
     try {
         const { user } = await validateRequest();
         const data = await request.json();
         data.node = nodesID;
-        // const checkUserExistorNot = await  //TODO
-
+   
+        const userPass = "Test@123"
         const userData = {
-            email: user?.email,
-            username: user?.username,
+            email: 'pratikss@gmaill.com',
+            username: 'pratik22',
             first_name: user?.username,
             last_name: 'test',
             password: "Test@123"
         }
-        const response = await axios.post(apiConfig.thirdparty.createUser, userData, {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.PT_TOKEN_SECRET}`,
-            },
-        });
-        console.log(response.data.attributes,"createed")
 
+        const checkUserExistorNot = await query.gameservers.getPanelUserByEmail(user?.email);
+        console.log(checkUserExistorNot,"got the response")
+
+
+        // const response = await createPanelUser(userData);
+        console.log(response.status)
+        if(response?.status == 201){
+            // let datauser = response?.data?.attributes
+        }
+        if(response?.status == 422){
+
+        }
         const datauser = {
-            id: 4,
+            id: 5,
             external_id: null,
-            uuid: '9da28a9f-8cc8-4fe4-833d-a6f57f25c77d',
-            username: 'test',
-            email: 'test@mm.com',
+            uuid: '33064898-d4be-400f-b031-8d2726c7a62a',
+            username: 'pratik22',
+            email: 'pratikss@gmaill.com',
             first_name: 'test',
             last_name: 'test',
             language: 'en',
             root_admin: false,
+            '2fa': false,
+            created_at: '2024-09-29T07:48:24+00:00',
+            updated_at: '2024-09-29T07:48:24+00:00',
+            password: userPass,
             
-            created_at: '2024-09-28T21:27:57+00:00',
-            updated_at: '2024-09-28T21:27:57+00:00'
           }
-
+        //   const res = query.gameservers.createPanelUser(datauser);
+        //   console.log("Hello",res)
         // TODO  create User 
          //Final API call completed
 
