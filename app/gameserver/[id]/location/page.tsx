@@ -81,7 +81,6 @@ export default function ConfigPage() {
                     },
                 });
                 setServerData(response.data);
-                console.log('Plan:', response.data);
 
                 setLoading(false);
             } catch (err) {
@@ -112,7 +111,7 @@ export default function ConfigPage() {
             allocation: {
                 default: 2
             },
-            name: serverPlan?.name
+            name: `${serverPlan?.name}-${game_id}`
         };
 
         return combinedData;
