@@ -5,11 +5,6 @@ import db from './mysql'
 interface DB_Users extends DB_UserData, RowDataPacket { }
 
 
-// check user have db server exist
-// post new db server data by userid and dbid
-// get new server data by userid and dbid
-// get list of database server by userid
-
 
 const Database = {
     db_server_exist: async (userid: string, dbid: string): Promise<boolean> => {
