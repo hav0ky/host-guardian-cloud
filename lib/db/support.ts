@@ -47,10 +47,8 @@ const Support = {
     }
   },
 
-  // Function to retrieve messages by ticket ID
   getMessagesByTicketId: async (ticketId: number): Promise<MessageData[] | null> => {
     try {
-      console.log("this is not hitting", ticketId);
       const sql = `
         SELECT * FROM support_messages
         WHERE ticket_id = ?
@@ -58,18 +56,15 @@ const Support = {
       `;
 
       const [rows] = await db.query<MessageRow[]>(sql, [ticketId]);
-      console.log(rows, "got the data");
       console.log(`[DB] Retrieved ${rows.length} messages for ticket ID: ${ticketId}`);
       return rows;
     } catch (err) {
-      console.log(err, "got the data");
 
       console.error(`[DB] Error while retrieving messages by ticket ID: ${err}`);
       return null;
     }
   },
 
-  // Function to retrieve messages between a sender and a ticket (specific chat for user/admin within a ticket)
   getMessagesBetweenSenderAndTicket: async (ticketId: number, senderId: number): Promise<MessageData[] | null> => {
     try {
       const sql = `
@@ -87,7 +82,6 @@ const Support = {
       return null;
     }
   },
-  // Function to create a new support ticket
   createSupportTicket: async (data: SupportTicketData): Promise<number | null> => {
     try {
       const sql = `

@@ -12,6 +12,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { SA_User } from "@/types/schema";
 import { useRouter } from "next/navigation";
+import { MSG_URL, CREATE_SUPPORT_URL } from "../apiConstants";
 
 interface CreateTicketFormProps {
     user: SA_User
@@ -106,7 +107,7 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ user }) => {
                 message,
             };
             try {
-                const response = await axios.post('/api/auth/support/getsupport/createsupport', ticketData);
+                const response = await axios.post(CREATE_SUPPORT_URL, ticketData);
 
                 if (response.status === 201) {
                     setSubject('');
@@ -118,7 +119,7 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ user }) => {
                 setLoading(false);
                 const newTicketId = response.data.ticketId;
                 try {
-                    await axios.post("/api/auth/support/messages", {
+                    await axios.post(MSG_URL, {
                         ticket_id: newTicketId,
                         sender_id: user.id,
                         message_text: message,
@@ -147,7 +148,7 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ user }) => {
 
     const fetchMessages = async (ticketId: number) => {
         try {
-            const response = await axios.get(`/api/auth/support/messages/${ticketId}`);
+            const response = await axios.get(`${MSG_URL}/${ticketId}`);
             if (response.status === 200) {
                 setMessages(response.data.messages);
             }
@@ -165,9 +166,9 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ user }) => {
 
     const handleSendMessage = async () => {
         if (!messageText.trim() || !selectedTicket) return;
-
+z
         try {
-            const response = await axios.post("/api/auth/support/messages", {
+            const response = await axios.post(MSG_URL, {
                 ticket_id: selectedTicket.id,
                 sender_id: user.id,
                 message_text: messageText,

@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import Sidebar from './components/Sidebar';
 import axios from 'axios';
 import { LoadingSpinner } from '@/components/ui/loader';
+import { GET_SUPPORT_TICKET_URL } from './apiConstants';
 
 interface SupportLayoutProps {
     children: ReactNode;
@@ -19,11 +20,10 @@ const SupportLayout: React.FC<SupportLayoutProps> = ({ children }) => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // Fetch tickets from the API
         const fetchTickets = async () => {
             setLoading(true)
             try {
-                const response = await axios.get("/api/auth/support/getsupport/getsupporttickets");
+                const response = await axios.get(GET_SUPPORT_TICKET_URL);
                 setTickets(response.data.tickets);
                 setLoading(false)
 

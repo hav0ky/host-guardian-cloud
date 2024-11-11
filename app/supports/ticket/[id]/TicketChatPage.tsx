@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { LoadingSpinner } from "@/components/ui/loader";
 import SupportContentWrapper from "../../components/SupportContentWrapper";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "@/components/ui/dialog";
+import { GET_SUPPORT_TICKET_URL, MSG_URL, UPDATE_SUPPORT_URL } from "../../apiConstants";
 
 interface SupportTicketData {
     id: number;
@@ -36,7 +37,7 @@ export default function TicketChatPage({ user }: { user: any }) {
 
     async function updateTicketStatus(ticketId: string, status: string) {
         try {
-            const response = await axios.patch('/api/auth/support/getsupport/updatesupport', { ticketId, status });
+            const response = await axios.patch(UPDATE_SUPPORT_URL, { ticketId, status });
             if (response.data.success) {
                 console.log('Ticket status updated successfully:', response.data.message);
                 toast.success("Ticket status updated successfully");
@@ -54,10 +55,10 @@ export default function TicketChatPage({ user }: { user: any }) {
     useEffect(() => {
         const fetchTicketData = async () => {
             try {
-                const ticketResponse = await axios.get(`/api/auth/support/getsupport/getsupporttickets/${ticketId}`);
+                const ticketResponse = await axios.get(`${GET_SUPPORT_TICKET_URL}/${ticketId}`);
                 setTicket(ticketResponse.data.ticket);
 
-                const messagesResponse = await axios.get(`/api/auth/support/messages/${ticketId}`);
+                const messagesResponse = await axios.get(`${MSG_URL}/${ticketId}`);
                 setMessages(messagesResponse.data.messages);
             } catch (err) {
                 console.error("Error fetching ticket details:", err);
@@ -72,7 +73,7 @@ export default function TicketChatPage({ user }: { user: any }) {
         if (!messageText.trim() || !ticket) return;
 
         try {
-            const response = await axios.post("/api/auth/support/messages", {
+            const response = await axios.post(MSG_URL, {
                 ticket_id: ticket.id,
                 sender_id: user.id,
                 message_text: messageText,

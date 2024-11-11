@@ -5,6 +5,7 @@ import TicketTable from './components/TicketTable';
 import axios from 'axios';
 import SupportContentWrapper from './components/SupportContentWrapper';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { GET_SUPPORT_TICKET_URL } from './apiConstants';
 
 
 const SupportsPage: React.FC = () => {
@@ -17,7 +18,7 @@ const SupportsPage: React.FC = () => {
     useEffect(() => {
         const fetchTickets = async () => {
             try {
-                const response = await axios.get("/api/auth/support/getsupport/getsupporttickets");
+                const response = await axios.get(GET_SUPPORT_TICKET_URL);
                 let fetchedTickets = response.data.tickets;
 
                 if (newTicketId) {
