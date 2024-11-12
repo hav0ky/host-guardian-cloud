@@ -13,6 +13,8 @@ import { toast } from "sonner";
 import { SA_User } from "@/types/schema";
 import { useRouter } from "next/navigation";
 import { MSG_URL, CREATE_SUPPORT_URL } from "../apiConstants";
+import TextEditor from "./TextEditor";
+import { Ticket } from "../types";
 
 interface CreateTicketFormProps {
     user: SA_User
@@ -29,6 +31,7 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ user }) => {
     const [selectedSupportItem, setSelectedSupportItem] = useState<number | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const [shouldReset, setShouldReset] = useState(false);
 
     const name = user.username;
     const email = user.email;
@@ -77,7 +80,7 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ user }) => {
             .replace(/> (.*?)(\n|$)/g, "<blockquote>$1</blockquote>");
         return { __html: html };
     };
-
+    const handleResetComplete = () => { setShouldReset(false); };
 
     const handleSubmit = async (e) => {
         setLoading(true);
@@ -115,6 +118,7 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ user }) => {
                     setPriority('');
                     setMessage('');
                     setErrors({});
+                    setShouldReset(true);
                 }
                 setLoading(false);
                 const newTicketId = response.data.ticketId;
@@ -143,57 +147,11 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ user }) => {
 
 
 
-    const [messages, setMessages] = useState<MessageData[]>([]);
-    const [messageText, setMessageText] = useState<string>("");
 
-    const fetchMessages = async (ticketId: number) => {
-        try {
-            const response = await axios.get(`${MSG_URL}/${ticketId}`);
-            if (response.status === 200) {
-                setMessages(response.data.messages);
-            }
-        } catch (err) {
-            toast.error("Failed to load support tickets.");
-            console.error("Error fetching messages:", err);
-        }
-    };
 
-    useEffect(() => {
-        if (selectedTicket) {
-            fetchMessages(selectedTicket.id);
-        }
-    }, [selectedTicket]);
-
-    const handleSendMessage = async () => {
-        if (!messageText.trim() || !selectedTicket) return;
-z
-        try {
-            const response = await axios.post(MSG_URL, {
-                ticket_id: selectedTicket.id,
-                sender_id: user.id,
-                message_text: messageText,
-            });
-
-            if (response.status === 201) {
-                setMessages([...messages, {
-                    id: response.data.messageId,
-                    ticket_id: selectedTicket.id,
-                    sender_id: user.id,
-                    message_text: messageText,
-                    created_at: new Date(),
-                }]);
-                setMessageText("");
-            } else {
-                toast.error("Failed to send message.");
-            }
-        } catch (err) {
-            console.error("Error sending message:", err);
-            toast.error("An unexpected error occurred while sending the message.");
-        }
-    };
 
     return (
-        <Card className="w-full">
+        <Card className="w-full mb-20">
             <CardHeader>
                 <CardTitle>Create Support Ticket</CardTitle>
                 <CardDescription>Fill out the form below to submit a new support ticket.</CardDescription>
@@ -256,49 +214,10 @@ z
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="message">Message</Label>
-                            <div className="border rounded-md p-2 dark:border-neutral-700 border-input">
-                                <div className="flex space-x-2 mb-2">
-                                    <Button variant="outline" size="icon" type="button" onClick={() => applyStyle("bold")}>
-                                        <Bold className="h-4 w-4" />
-                                    </Button>
-                                    <Button variant="outline" size="icon" type="button" onClick={() => applyStyle("italic")}>
-                                        <Italic className="h-4 w-4" />
-                                    </Button>
-                                    <Button variant="outline" size="icon" type="button" onClick={() => applyStyle("heading")}>
-                                        <span className="font-bold">H</span>
-                                    </Button>
-                                    <Button variant="outline" size="icon" type="button" onClick={() => applyStyle("unordered-list")}>
-                                        <List className="h-4 w-4" />
-                                    </Button>
-                                    <Button variant="outline" size="icon" type="button" onClick={() => applyStyle("code")}>
-                                        <Code className="h-4 w-4" />
-                                    </Button>
-                                    <Button variant="outline" size="icon" type="button" onClick={() => applyStyle("quote")}>
-                                        <Quote className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                                <Tabs defaultValue="write">
-                                    <TabsList className="mb-2">
-                                        <TabsTrigger value="write">Write</TabsTrigger>
-                                        <TabsTrigger value="preview">Preview</TabsTrigger>
-                                    </TabsList>
-                                    <TabsContent value="write">
-                                        <textarea
-                                            id="message"
-                                            placeholder="Describe your issue in detail"
-                                            required
-                                            className="w-full min-h-[150px] p-2 border rounded dark:bg-black dark:border-neutral-700"
-                                            value={message}
-                                            onChange={(e) => setMessage(e.target.value)}
-                                        />
-                                    </TabsContent>
-                                    <TabsContent value="preview">
-                                        <div
-                                            className="w-full min-h-[150px] p-2 border rounded prose dark:prose-invert dark:border-gray-600"
-                                            dangerouslySetInnerHTML={renderPreview()}
-                                        />
-                                    </TabsContent>
-                                </Tabs>
+                            <div className=" dark:border-neutral-700 border-input">
+                            <TextEditor wordLimit={50} handleChange={setMessage} initialContent={''} placeHolderText={'Type your message...'} 
+                        shouldReset={shouldReset} onResetComplete={handleResetComplete} />
+
                             </div>
                             {errors.message && <p className="text-red-500 text-sm">{errors.message}</p>}
                         </div>
@@ -307,7 +226,7 @@ z
                         <Button variant="outline" type="button" onClick={() => toast.info("Ticket creation canceled.")}>
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={loading}>
+                        <Button type="submit" disabled={loading || !subject.trim() || !department.trim() || !priority.trim() || !message.trim()}>
                             {loading ? "Submitting..." : "Submit Ticket"}
                         </Button>
                     </CardFooter>

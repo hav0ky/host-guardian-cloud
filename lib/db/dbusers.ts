@@ -1,5 +1,5 @@
-import type { ResultSetHeader, RowDataPacket } from 'mysql2'
-import type { DB_Count, DB_UserData } from '@/types/schema'
+import type { RowDataPacket } from 'mysql2'
+import type { DB_UserData } from '@/types/schema'
 import db from './mysql'
 
 interface DB_Users extends DB_UserData, RowDataPacket { }

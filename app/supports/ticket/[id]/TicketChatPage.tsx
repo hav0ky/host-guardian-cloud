@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import DOMPurify from "dompurify";
+import { useParams, useRouter } from "next/navigation"; // Use router for page refresh
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,8 @@ import { LoadingSpinner } from "@/components/ui/loader";
 import SupportContentWrapper from "../../components/SupportContentWrapper";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "@/components/ui/dialog";
 import { GET_SUPPORT_TICKET_URL, MSG_URL, UPDATE_SUPPORT_URL } from "../../apiConstants";
+import TextEditor from "../../components/TextEditor";
+import { Lock } from 'lucide-react';
 
 interface SupportTicketData {
     id: number;
@@ -28,10 +31,13 @@ interface MessageData {
 
 export default function TicketChatPage({ user }: { user: any }) {
     const { id: ticketId } = useParams();
+    const router = useRouter(); // For page refresh
     const [ticket, setTicket] = useState<SupportTicketData | null>(null);
     const [messages, setMessages] = useState<MessageData[]>([]);
     const [messageText, setMessageText] = useState<string>("");
+    const [shouldReset, setShouldReset] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [dialogType, setDialogType] = useState<'close' | 'reopen'>('close'); // For dialog type
 
     const isAdmin = user.role === 'admin';
 
@@ -39,9 +45,9 @@ export default function TicketChatPage({ user }: { user: any }) {
         try {
             const response = await axios.patch(UPDATE_SUPPORT_URL, { ticketId, status });
             if (response.data.success) {
-                console.log('Ticket status updated successfully:', response.data.message);
-                toast.success("Ticket status updated successfully");
+                toast.success(`Ticket status updated to ${status}`);
                 setTicket(prevTicket => prevTicket ? { ...prevTicket, status } : null);
+                router.refresh(); // Refresh page to reflect status change
             } else {
                 console.error('Failed to update ticket status:', response.data.error);
                 toast.error("Failed to update ticket status.");
@@ -90,6 +96,7 @@ export default function TicketChatPage({ user }: { user: any }) {
                 },
             ]);
             setMessageText("");
+            setShouldReset(true);
         } catch (err) {
             console.error("Error sending message:", err);
             toast.error("Failed to send message.");
@@ -98,7 +105,22 @@ export default function TicketChatPage({ user }: { user: any }) {
 
     const handleConfirmCloseTicket = () => {
         updateTicketStatus(ticketId, 'closed');
-        setIsDialogOpen(false); // Close the dialog after confirming
+        setIsDialogOpen(false);
+    };
+
+    const handleReopenTicket = async () => {
+        try {
+            await updateTicketStatus(ticketId, 'open');
+            setTicket(prevTicket => prevTicket ? { ...prevTicket, status: 'open' } : null);
+            setIsDialogOpen(false);
+        } catch (error) {
+            console.error("Error reopening ticket:", error);
+            toast.error("Failed to reopen ticket.");
+        }
+    };
+
+    const handleResetComplete = () => {
+        setShouldReset(false);
     };
 
     if (!ticket) return <LoadingSpinner />;
@@ -113,9 +135,26 @@ export default function TicketChatPage({ user }: { user: any }) {
                         </CardTitle>
                         <CardDescription>Status: {ticket?.status}</CardDescription>
                     </div>
-                    <div className="ml-auto">
-                        <Button onClick={() => setIsDialogOpen(true)} disabled={ticket.status === "closed"}>
-                            Close
+                    <div className="ml-auto flex items-center space-x-4">
+                        {ticket?.status === "closed" && (
+                            <>
+                                <Button variant="secondary" onClick={() => {
+                                    setDialogType('reopen');
+                                    setIsDialogOpen(true);
+                                }}>
+                                    Reopen
+                                </Button>
+                                <Lock className="w-5 h-5 text-gray-500" />
+                            </>
+                        )}
+                        <Button
+                            onClick={() => {
+                                setDialogType('close');
+                                setIsDialogOpen(true);
+                            }}
+                            disabled={ticket.status === "closed"}
+                        >
+                            {ticket?.status === "closed" ? "Closed" : "Close"}
                         </Button>
                     </div>
                 </CardHeader>
@@ -133,13 +172,13 @@ export default function TicketChatPage({ user }: { user: any }) {
                             const messageLabel = isOwnMessage
                                 ? "You"
                                 : isAdmin
-                                ? "User"
-                                : "Admin";
+                                    ? "User"
+                                    : "Admin";
 
                             return (
                                 <div
                                     key={msg.id}
-                                    className={`p-3 max-w-lg rounded-lg ${messageAlignment} text-black dark:text-white`}
+                                    className={`p-3 max-w-lg w-fit rounded-lg ${messageAlignment} text-black dark:text-white`}
                                 >
                                     <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">
                                         {`Posted by ${messageLabel} on ${new Intl.DateTimeFormat("en-GB", {
@@ -153,21 +192,21 @@ export default function TicketChatPage({ user }: { user: any }) {
                                             hour12: true,
                                         }).format(new Date(msg.created_at))})`}
                                     </div>
-                                    <p>{msg.message_text}</p>
+                                    <p
+                                        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(msg.message_text) }}
+                                    />
                                 </div>
                             );
                         })}
                     </div>
+                    <div className="dark:border-neutral-700 border-input mt-10">
+                        <TextEditor wordLimit={50} handleChange={setMessageText} initialContent={''} placeHolderText={'Type your message...'}
+                            shouldReset={shouldReset} onResetComplete={handleResetComplete} />
+                    </div>
                 </CardContent>
 
-                <CardFooter className="flex items-center space-x-2">
-                    <Input
-                        placeholder="Type your message..."
-                        className="mr-2"
-                        value={messageText}
-                        onChange={(e) => setMessageText(e.target.value)}
-                        disabled={ticket.status === "closed"}
-                    />
+
+                <CardFooter className="flex justify-end space-x-2">
                     <Button
                         onClick={handleSendMessage}
                         disabled={ticket.status === "closed"}
@@ -182,14 +221,16 @@ export default function TicketChatPage({ user }: { user: any }) {
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Are you sure you want to close this ticket?</DialogTitle>
+                        <DialogTitle>
+                            {dialogType === 'close' ? 'Are you sure you want to close this ticket?' : 'Are you sure you want to reopen this ticket?'}
+                        </DialogTitle>
                     </DialogHeader>
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
                             Cancel
                         </Button>
-                        <Button variant="destructive" onClick={handleConfirmCloseTicket}>
-                            Yes, Close Ticket
+                        <Button variant="destructive" onClick={dialogType === 'close' ? handleConfirmCloseTicket : handleReopenTicket}>
+                            Yes, {dialogType === 'close' ? 'Close' : 'Reopen'} Ticket
                         </Button>
                     </DialogFooter>
                 </DialogContent>

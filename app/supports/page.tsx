@@ -2,48 +2,37 @@
 
 import { useEffect, useState } from 'react';
 import TicketTable from './components/TicketTable';
-import axios from 'axios';
 import SupportContentWrapper from './components/SupportContentWrapper';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { GET_SUPPORT_TICKET_URL } from './apiConstants';
-
+import { useSearchParams } from 'next/navigation';
+import { useSupportTickets } from './SupportTicketsContext';
 
 const SupportsPage: React.FC = () => {
-    const [tickets, setTickets] = useState<Ticket[]>([]);
+    const { tickets } = useSupportTickets();
+    const [orderedTickets, setOrderedTickets] = useState(tickets);
 
-    const router = useRouter();
     const searchParams = useSearchParams();
     const newTicketId = searchParams.get("newTicketId");
 
     useEffect(() => {
-        const fetchTickets = async () => {
-            try {
-                const response = await axios.get(GET_SUPPORT_TICKET_URL);
-                let fetchedTickets = response.data.tickets;
-
-                if (newTicketId) {
-                    const newTicket = fetchedTickets.find((ticket: any) => ticket.id === parseInt(newTicketId));
-                    if (newTicket) {
-                        fetchedTickets = [
-                            newTicket,
-                            ...fetchedTickets.filter((ticket: any) => ticket.id !== parseInt(newTicketId)),
-                        ];
-                    }
-                }
-
-                setTickets(fetchedTickets);
-            } catch (error) {
-                console.error("Error fetching tickets:", error);
+        if (newTicketId) {
+            const newTicket = tickets.find((ticket) => ticket.id === parseInt(newTicketId));
+            if (newTicket) {
+                setOrderedTickets([
+                    newTicket,
+                    ...tickets.filter((ticket) => ticket.id !== parseInt(newTicketId)),
+                ]);
+            } else {
+                setOrderedTickets(tickets);
             }
-        };
-
-        fetchTickets();
-    }, [newTicketId]);
+        } else {
+            setOrderedTickets(tickets);
+        }
+    }, [newTicketId, tickets]);
 
     return (
         <div>
             <SupportContentWrapper>
-                <TicketTable tickets={tickets} />
+                <TicketTable tickets={orderedTickets} />
             </SupportContentWrapper>
         </div>
     );

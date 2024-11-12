@@ -5,6 +5,7 @@ import Sidebar from './components/Sidebar';
 import axios from 'axios';
 import { LoadingSpinner } from '@/components/ui/loader';
 import { GET_SUPPORT_TICKET_URL } from './apiConstants';
+import { SupportTicketsProvider } from './SupportTicketsContext';
 
 interface SupportLayoutProps {
     children: ReactNode;
@@ -21,31 +22,33 @@ const SupportLayout: React.FC<SupportLayoutProps> = ({ children }) => {
 
     useEffect(() => {
         const fetchTickets = async () => {
-            setLoading(true)
+            setLoading(true);
             try {
                 const response = await axios.get(GET_SUPPORT_TICKET_URL);
                 setTickets(response.data.tickets);
-                setLoading(false)
-
+                setLoading(false);
             } catch (error) {
                 console.error("Error fetching tickets:", error);
-                setLoading(false)
+                setLoading(false);
             }
         };
 
         fetchTickets();
     }, []);
-    if (loading) return <LoadingSpinner/>;
+
+    if (loading) return <LoadingSpinner />;
 
     return (
-        <div className="flex flex-col md:flex-row w-full max-w-7xl mx-auto mt-20 dark:bg-neutral-950-800 text-black dark:text-white">
-            <div className="w-full md:w-1/4 xl:w-1/5">
-                <Sidebar tickets={tickets} />
+        <SupportTicketsProvider tickets={tickets}>
+            <div className="flex flex-col md:flex-row w-full max-w-7xl mx-auto mt-20 dark:bg-neutral-950-800 text-black dark:text-white">
+                <div className="w-full md:w-1/4 xl:w-1/5">
+                    <Sidebar tickets={tickets} />
+                </div>
+                <div className="flex-1">
+                    {children}
+                </div>
             </div>
-            <div className="flex-1">
-                {children}
-            </div>
-        </div>
+        </SupportTicketsProvider>
     );
 };
 

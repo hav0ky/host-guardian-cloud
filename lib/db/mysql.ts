@@ -20,7 +20,6 @@ let isReady = false
 db.on('connection', async () => {
     if (isReady) return
     isReady = true
-    console.log(`[DB] Connected to database`)
 })
 
 export default db

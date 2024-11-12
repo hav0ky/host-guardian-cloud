@@ -8,15 +8,17 @@ import { Separator } from "@/components/ui/separator"; // Divider component
 import { LoadingSpinner } from "@/components/ui/loader";
 import { useEffect } from "react";
 import { useUser } from "../useUserHooks";
+import { useSupportTickets } from "../SupportTicketsContext";
+import { Ticket } from "../types";
 
-interface Ticket {
-    id: number;
-    name: string;
-    last_updated: string;
-}
+// interface Ticket {
+//     id: number;
+//     name: string;
+//     last_updated: string;
+// }
 
 interface SidebarProps {
-    tickets: Ticket[];
+    tickets: Ticket
 }
 
 function formatRelativeTime(dateString: string): string {
@@ -39,11 +41,12 @@ function formatRelativeTime(dateString: string): string {
     return `${years} years ago`;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ tickets }) => {
+const Sidebar: React.FC<SidebarProps> = () => {
+    const { tickets } = useSupportTickets();
     const router = useRouter();
     const recentTickets = tickets
         .sort((a, b) => new Date(b.last_updated).getTime() - new Date(a.last_updated).getTime())
-        .slice(0, 5);
+        .slice(0, 15);
 
     const handleTicketClick = (ticketId: number) => {
         router.push(`/supports/ticket/${ticketId}`);
@@ -85,7 +88,12 @@ const Sidebar: React.FC<SidebarProps> = ({ tickets }) => {
                         <CardTitle className="text-md font-semibold">Recent Tickets</CardTitle>
                     </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent
+                    className="max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-neutral-700"
+                    style={{
+                        scrollbarWidth: 'thin',
+                    }}
+                >
                     {recentTickets.length > 0 ? (
                         recentTickets.map((ticket, index) => (
                             <div key={ticket.id}>
@@ -101,10 +109,8 @@ const Sidebar: React.FC<SidebarProps> = ({ tickets }) => {
                                         {formatRelativeTime(ticket.last_updated)}
                                     </span>
                                 </Button>
-
-
                                 {index < recentTickets.length - 1 && (
-                                    <Separator className=" border-gray-200 dark:border-neutral-700" />
+                                    <Separator className="border-gray-200 dark:border-neutral-700" />
                                 )}
                             </div>
                         ))
@@ -112,6 +118,8 @@ const Sidebar: React.FC<SidebarProps> = ({ tickets }) => {
                         <p className="text-sm text-gray-500">No recent tickets</p>
                     )}
                 </CardContent>
+
+
             </Card>
 
             {/* Divider */}
