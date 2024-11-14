@@ -32,6 +32,11 @@ export default async function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SessionProvider value={session}>
             <main className="">
+              <script
+                id="ze-snippet"
+                src="https://static.zdassets.com/ekr/snippet.js?key=c10d619d-f9ff-47c0-84bf-260ae80b5013"
+                async
+              ></script>
               <SiteHeader />
               <main>
                 {children}

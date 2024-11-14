@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
             await query.support.updateTicketLastUpdated(ticket_id);
             if (user.role === 'admin') {
                 await query.support.updateTicketStatus(ticket_id, 'in progress');
+                await query.support.updateTicketAdminReplied(ticket_id, 'yes');
             }
             return NextResponse.json({ message: 'Message sent successfully', messageId }, { status: 201 });
         } else {

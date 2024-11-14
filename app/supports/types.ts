@@ -10,6 +10,7 @@ export interface Ticket {
     status: string;
     created_at: string;
     last_updated: string;
+    admin_replied: string;
 }
 
 export interface MessageData {

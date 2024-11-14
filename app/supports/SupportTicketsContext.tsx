@@ -1,7 +1,6 @@
 import React, { createContext, useContext, ReactNode, useState, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import { GET_SUPPORT_TICKET_URL } from './apiConstants';
-import { usePathname } from 'next/navigation';
 import { LoadingSpinner } from '@/components/ui/loader';
 
 interface Ticket {
@@ -21,7 +20,6 @@ const SupportTicketsContext = createContext<SupportTicketsContextType | undefine
 export const SupportTicketsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [loading, setLoading] = useState(true);
-    const pathname = usePathname();
 
     const fetchTickets = useCallback(async () => {
         setLoading(true);
@@ -35,14 +33,10 @@ export const SupportTicketsProvider: React.FC<{ children: ReactNode }> = ({ chil
         }
     }, []);
 
-    useEffect(() => {
-        fetchTickets(); // Initial load of tickets
-    }, [fetchTickets]);
-
-    // Trigger a ticket refresh on pathname change
+    // Fetch tickets only once on component mount
     useEffect(() => {
         fetchTickets();
-    }, [pathname, fetchTickets]);
+    }, [fetchTickets]);
 
     const refreshTickets = useCallback(() => {
         fetchTickets();

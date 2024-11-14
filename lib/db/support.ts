@@ -125,7 +125,26 @@ const Support = {
       return false;
     }
   },
-  
+
+  updateTicketAdminReplied: async (ticket_id: number, adminReplied: string): Promise<boolean> => {
+    try {
+      const sql = `UPDATE support_tickets SET admin_replied = ? WHERE id = ?`;
+
+      const [result] = await db.query<ResultSetHeader>(sql, [adminReplied, ticket_id]);
+
+      if (result.affectedRows > 0) {
+        console.log(`[DB] Successfully updated admin_replied for ticket with ID: ${ticket_id}`);
+        return true;
+      } else {
+        console.log(`[DB] No ticket found with ID: ${ticket_id}`);
+        return false;
+      }
+    } catch (err) {
+      console.error(`[DB] Error while updating admin_replied for ticket ID ${ticket_id}: ${err}`);
+      return false;
+    }
+  },
+
   updateTicketStatus: async (ticketId: number, status: string): Promise<boolean> => {
     try {
       const sql = `
@@ -133,9 +152,9 @@ const Support = {
           SET status = ?, last_updated = NOW()
           WHERE id = ?
         `;
-  
+
       const [result] = await db.query<ResultSetHeader>(sql, [status, ticketId]);
-  
+
       if (result.affectedRows > 0) {
         console.log(`[DB] Successfully updated ticket ID ${ticketId} with status: ${status}`);
         return true;

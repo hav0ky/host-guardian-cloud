@@ -5,17 +5,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useUser } from "../useUserHooks";
+import { LoadingSpinner } from "@/components/ui/loader";
+import { Ticket } from "../types";
 
-interface Ticket {
-    id: number;
-    subject: string;
-    status: string;
-    created_at: string;
-    name?: string;
-    email?: string;
-    department?: string;
-    priority?: string;
-}
 
 interface TicketTableProps {
     tickets: Ticket[];
@@ -27,6 +19,9 @@ const TicketTable: React.FC<TicketTableProps> = ({ tickets }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
+    const [filterPriority, setFilterPriority] = useState("");
+    const [filterStatus, setFilterStatus] = useState("");
+    const [filterOpenOneMessage, setFilterOpenOneMessage] = useState(false);
     const entriesPerPage = 10;
 
     useEffect(() => {
@@ -41,17 +36,21 @@ const TicketTable: React.FC<TicketTableProps> = ({ tickets }) => {
 
     const isAdmin = user?.role === 'admin';
 
+    // Filter tickets based on search term, priority, status, and "open with one message"
     const filteredTickets = tickets.filter((ticket) => {
-        if (isAdmin) {
-            return (
-                ticket.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                ticket.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                ticket.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                ticket.department?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                ticket.priority?.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        }
-        return ticket.subject.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = isAdmin
+            ? ticket.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            ticket.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            ticket.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            ticket.department?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            ticket.priority?.toLowerCase().includes(searchTerm.toLowerCase())
+            : ticket.subject.toLowerCase().includes(searchTerm.toLowerCase());
+
+        const matchesPriority = filterPriority ? ticket.priority === filterPriority : true;
+        const matchesStatus = filterStatus ? ticket.status === filterStatus : true;
+        const matchesOpenOneMessage = filterOpenOneMessage ? (ticket.admin_replied === "false") : true;
+        console.log(ticket.admin_replied, "aaa")
+        return matchesSearch && matchesPriority && matchesStatus && matchesOpenOneMessage;
     });
 
     const totalPages = Math.ceil(filteredTickets.length / entriesPerPage);
@@ -62,32 +61,70 @@ const TicketTable: React.FC<TicketTableProps> = ({ tickets }) => {
     };
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <LoadingSpinner />;
     }
 
     return (
         <Card className="w-full">
-            <CardHeader className="flex flex-col lg:flex-row items-start lg:items-center bg-muted/50 gap-4">
-                <div className="flex-grow">
-                    <CardTitle className="text-lg">
-                        {isAdmin ? "Support Tickets Overview" : "My Support Tickets"}
-                    </CardTitle>
-                    <CardDescription>
-                        {isAdmin ? "View all support tickets submitted by users below." : "View your recent support tickets below."}
-                    </CardDescription>
-                </div>
-
-                {/* Search Bar */}
-                <div className="w-full lg:w-1/2 mt-4 lg:mt-0">
+            <CardHeader className="flex flex-col lg:flex-row items-start lg:items-center bg-muted/50 gap-4 w-full">
+                {!isAdmin ? (
+                    <div className="flex-grow w-full lg:w-auto">
+                        <CardTitle className="text-lg">My Support Tickets</CardTitle>
+                        <CardDescription>
+                            {isAdmin ? "View all support tickets submitted by users below." : "View your recent support tickets below."}
+                        </CardDescription>
+                    </div>
+                ) : null}
+                <div className="w-full lg:w-1/3 flex items-center lg:mt-2">
                     <input
                         type="text"
                         placeholder={isAdmin ? "Search by name, email, subject, department, or priority" : "Search by subject"}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md dark:bg-neutral-900 dark:text-white"
+                        className="w-full p-2 border border-gray-300 dark:border-neutral-700 rounded-md dark:bg-neutral-900 dark:text-white h-[40px] lg:h-auto"
                     />
                 </div>
+
+                {/* Admin Filters */}
+                {isAdmin && (
+                    <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto items-start mb-3 lg:items-center lg:mt-0">
+                        <select
+                            value={filterPriority}
+                            onChange={(e) => setFilterPriority(e.target.value)}
+                            className="w-full sm:w-auto p-2 border border-gray-300 dark:border-neutral-700 rounded-md dark:bg-neutral-900 dark:text-white h-[40px] lg:h-auto"
+                        >
+                            <option value="">Filter by Priority</option>
+                            <option value="urgent">Urgent</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                        <select
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                            className="w-full sm:w-auto p-2 border border-gray-300 dark:border-neutral-700 rounded-md dark:bg-neutral-900 dark:text-white h-[40px] lg:h-auto"
+                        >
+                            <option value="">Filter by Status</option>
+                            <option value="open">Open</option>
+                            <option value="in progress">In Progress</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                        <label className="flex items-center w-full sm:w-auto text-gray-700 dark:text-gray-300 lg:h-auto">
+                            <input
+                                type="checkbox"
+                                checked={filterOpenOneMessage}
+                                onChange={() => setFilterOpenOneMessage(!filterOpenOneMessage)}
+                                className="mr-2 h-[20px]"
+                            />
+                            Admin not Replied
+                        </label>
+                    </div>
+                )}
             </CardHeader>
+
+
+
+
 
             <CardContent>
                 {filteredTickets.length > 0 ? (

@@ -18,7 +18,7 @@ import { Ticket } from "../types";
 // }
 
 interface SidebarProps {
-    tickets: Ticket
+    // tickets: Ticket
 }
 
 function formatRelativeTime(dateString: string): string {
