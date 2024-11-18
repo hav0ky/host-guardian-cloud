@@ -1,4 +1,3 @@
-import { IconBrandMysql } from "@tabler/icons-react";
 
 export const databases = [
     {

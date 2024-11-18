@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import * as LucideIcons from "lucide-react";
+import { DB_GameServerFeatures } from "@/types/schema";
+import { LucideIcon } from "lucide-react";
 
 
 // {
@@ -19,12 +21,7 @@ export const HoverEffect = ({
   items,
   className,
 }: {
-  items: {
-    featurename: string;
-    description: string;
-    iconname:  string;
-    game_id: string;
-  }[];
+  items: DB_GameServerFeatures[] | undefined,
   className?: string;
 }) => {
 
@@ -36,7 +33,7 @@ export const HoverEffect = ({
   //   game_id: '1'
   // },
 
-  let [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   return (
     <div
       className={cn(
@@ -44,7 +41,7 @@ export const HoverEffect = ({
         className
       )}
     >
-      {items.map((item, idx) => (
+      {items && items.map((item, idx) => (
         <Link
           href={'#'}
           key={item?.game_id}
@@ -68,10 +65,10 @@ export const HoverEffect = ({
                 }}
               />
             )}
-            
+
           </AnimatePresence>
           <Card>
-            <CardIcon icon={items.iconname} className="mr-2" />
+            <CardIcon icon={item.iconname} className="mr-2" />
             <CardTitle>{item.featurename}</CardTitle>
             <CardDescription>{item.description}</CardDescription>
           </Card>
@@ -138,17 +135,19 @@ export const CardIcon = ({
   icon,
   className,
 }: {
-  icon?: string ; // Restrict to valid Lucide icon names
+  icon?: string; // Restrict to valid Lucide icon names
   className?: string;
 }) => {
-  type IconComponentType = React.ComponentType<{ size?: number, className?: string }>;
+  // type IconComponentType = React.ComponentType<{ size?: number, className?: string }>;
+  const IconComponent = icon && icon in LucideIcons
+  ? (LucideIcons[icon as keyof typeof LucideIcons] as LucideIcon)
+  : null;
 
-const IconComponent = icon ? (LucideIcons[icon] as typeof LucideIcons[keyof typeof LucideIcons]) : null;
-  return (
-    <div className={cn("dark:text-zinc-100 text-zinc-900  tracking-wide", className)}>
+return (
+  <div className={cn("dark:text-zinc-100 text-zinc-900 tracking-wide", className)}>
       {IconComponent ? (
-        <IconComponent className="text-zinc-100 font-bold tracking-wide mb-4" size={44} />
+          <IconComponent className="text-zinc-100 font-bold tracking-wide mb-4" size={44} />
       ) : null}
-    </div>
-  );
+  </div>
+);
 };

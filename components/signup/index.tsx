@@ -1,12 +1,9 @@
-import Image from "next/image"
 import Link from "next/link"
 
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
 
+import { validateRequest } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import RegisterForm from "./form"
-import { validateRequest } from "@/lib/auth"
 
 export default async function SignUpPage() {
     const { user } = await validateRequest()

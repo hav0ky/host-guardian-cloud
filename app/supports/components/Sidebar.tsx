@@ -1,15 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { PlusCircle, List, Clipboard } from "lucide-react"; // Import icons from lucide-react
-import { Separator } from "@/components/ui/separator"; // Divider component
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loader";
+import { Separator } from "@/components/ui/separator"; // Divider component
+import { Clipboard, List, PlusCircle } from "lucide-react"; // Import icons from lucide-react
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useUser } from "../useUserHooks";
 import { useSupportTickets } from "../SupportTicketsContext";
-import { Ticket } from "../types";
+import { useUser } from "../useUserHooks";
 
 // interface Ticket {
 //     id: number;
@@ -17,9 +16,9 @@ import { Ticket } from "../types";
 //     last_updated: string;
 // }
 
-interface SidebarProps {
-    // tickets: Ticket
-}
+// interface SidebarProps {
+//     tickets: Ticket
+// }
 
 function formatRelativeTime(dateString: string): string {
     const date = new Date(dateString);
@@ -41,7 +40,7 @@ function formatRelativeTime(dateString: string): string {
     return `${years} years ago`;
 }
 
-const Sidebar: React.FC<SidebarProps> = () => {
+const Sidebar: React.FC = () => {
     const { tickets } = useSupportTickets();
     const router = useRouter();
     const recentTickets = tickets
@@ -56,7 +55,7 @@ const Sidebar: React.FC<SidebarProps> = () => {
 
     useEffect(() => {
         if (!loading && !user) {
-            router.push("/login");
+            router.push("/signin");
         }
     }, [loading, user, router]);
 

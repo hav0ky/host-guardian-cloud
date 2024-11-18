@@ -1,4 +1,29 @@
-export const gameEggsData = [{
+
+
+interface GameEnvironment {
+    [key: string]: string | number | undefined;
+}
+
+interface FeatureLimits {
+    databases: number;
+    backups: number;
+    allocations?: number; 
+}
+
+export interface GameEgg {
+    docker_image: string;
+    startup: string;
+    allocation: number;
+    egg: number;
+    environment: GameEnvironment;
+    feature_limits: FeatureLimits;
+}
+
+export interface GameEggsData {
+    [gameName: string]: GameEgg;
+}
+
+export const gameEggsData: GameEggsData[] = [{
     minecraft: {
         docker_image: "ghcr.io/pterodactyl/yolks:java_21",
         startup: "java -Xms128M -XX:MaxRAMPercentage=95.0 -jar server.jar",

@@ -20,6 +20,8 @@ export async function POST(request: Request) {
       priority,
       message,
       userid,
+      created_at: new Date().toISOString(),
+      last_updated: new Date().toISOString(),
     });
     if (ticketId) {
       return NextResponse.json({ success: true, ticketId }, { status: 201 });

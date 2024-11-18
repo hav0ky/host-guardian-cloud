@@ -10,7 +10,7 @@ const Database = {
     db_server_exist: async (userid: string, dbid: string): Promise<boolean> => {
         try {
             const sql = `SELECT COUNT(*) AS count FROM \`database\` WHERE userid = ? AND dbid = ?`;
-            const [rows] = await db.query<any[]>(sql, [userid, dbid]);
+            const [rows] = await db.query<DB_Users[]>(sql, [userid, dbid]);
             console.log(rows[0].count, "rowss")
             return rows[0].count > 0;
         } catch (err) {

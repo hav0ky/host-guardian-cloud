@@ -1,17 +1,16 @@
 "use client"
 
-import * as React from "react"
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { useForm } from "react-hook-form"
-import { loginSchema } from "@/types/zod";
+import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { loginSchema } from "@/types/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import * as React from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 type Input = z.infer<typeof loginSchema>
 
@@ -19,7 +18,6 @@ interface LoginFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export function LoginForm({ className, ...props }: LoginFormProps) {
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
-    const router = useRouter()
     const form = useForm<Input>({
         resolver: zodResolver(loginSchema),
         defaultValues: {

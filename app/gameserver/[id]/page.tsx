@@ -31,7 +31,7 @@ const GamePage = async ({ params }: { params: { id: string } }) => {
                     
                     <div className=" justify-center align-middle items-center flex flex-wrap gap-6 pt-10">
                         {data.pricing.map((p, i) =>
-                             <div className="flex justify-center items-center h-full">
+                             <div key={i} className="flex justify-center items-center h-full">
                              <GameServerListing data={p} index={i} key={i} />
                          </div>
                         )}

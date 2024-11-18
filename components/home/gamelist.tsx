@@ -1,11 +1,8 @@
 'use clinet'
-import { gameServers } from '@/app/config/gameservers'
-import { getAllGames } from '@/lib/db/gameserverapi'
 import { GameServer } from '@/types/schema'
-import axios from 'axios'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 interface GameServersProps {
   data: GameServer[];
 }

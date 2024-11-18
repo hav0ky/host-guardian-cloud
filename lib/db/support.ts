@@ -10,8 +10,8 @@ interface SupportTicketData {
   priority: string
   message: string,
   userid: string,
-  last_updated: Date,
-  created_at?: Date
+  last_updated?: string,
+  created_at?: string
 }
 interface MessageData {
   id?: number;
@@ -86,7 +86,7 @@ const Support = {
     try {
       const sql = `
           INSERT INTO support_tickets (name, email, subject, department, priority, message, userid, created_at, last_updated)
-          VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `
 
       const [result] = await db.query<ResultSetHeader>(sql, [
@@ -97,6 +97,8 @@ const Support = {
         data.priority,
         data.message,
         data.userid,
+        data.created_at,
+        data.last_updated,
       ])
 
       console.log(`[DB] Successfully inserted support ticket with ID: ${result.insertId}`)
@@ -172,7 +174,7 @@ const Support = {
   supportTicketExists: async (id: number): Promise<boolean> => {
     try {
       const sql = `SELECT COUNT(*) AS count FROM support_tickets WHERE id = ?`
-      const [rows] = await db.query<{ count: number }[]>(sql, [id])
+      const [rows] = await db.query<RowDataPacket[]>(sql, [id])
 
       return rows[0].count > 0
     } catch (err) {
@@ -180,6 +182,42 @@ const Support = {
       return false
     }
   },
+
+  getTicketCounts: async (): Promise<{
+    total: number;
+    open: number;
+    inProgress: number;
+    closed: number;
+  }> => {
+    try {
+      const sql = `
+        SELECT 
+          COUNT(*) as total,
+          SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) as open,
+          SUM(CASE WHEN status = 'in progress' THEN 1 ELSE 0 END) as inProgress,
+          SUM(CASE WHEN status = 'closed' THEN 1 ELSE 0 END) as closed
+        FROM support_tickets
+      `;
+
+      const [rows] = await db.query<RowDataPacket[]>(sql);
+
+      return rows[0] as {
+        total: number;
+        open: number;
+        inProgress: number;
+        closed: number;
+      };
+    } catch (err) {
+      console.error(`[DB] Error while fetching ticket counts: ${err}`);
+      return {
+        total: 0,
+        open: 0,
+        inProgress: 0,
+        closed: 0,
+      };
+    }
+  },
+
 
   getSupportTicketById: async (id: number): Promise<SupportTicketData | null> => {
     try {
@@ -197,7 +235,7 @@ const Support = {
     }
   },
 
-  getSupportTicketsByEmail: async (email: string): Promise<SupportTicketData[] | null> => {
+  getSupportTicketsByEmail: async (email: string | undefined): Promise<SupportTicketData[] | null> => {
     try {
       const sql = `SELECT * FROM support_tickets WHERE email = ? ORDER BY created_at DESC`
       const [rows] = await db.query<SupportTicketRow[]>(sql, [email])

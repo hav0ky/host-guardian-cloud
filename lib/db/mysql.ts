@@ -1,6 +1,6 @@
 import { createPool, Pool } from 'mysql2/promise'
 
-let globalForDb = global as unknown as { db: Pool }
+const globalForDb = global as unknown as { db: Pool }
 
 const db = globalForDb.db || createPool({
     host: process.env.DB_HOST,

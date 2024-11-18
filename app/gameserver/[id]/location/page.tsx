@@ -1,37 +1,41 @@
 "use client"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { useEffect, useMemo, useState } from "react";
-import { cn, durationsPlan, filterRegionsByTab, getDescriptionForPlan, getPriceForPlan } from "@/lib/utils";
-import { Label } from "@/components/ui/label"
-import ReactCountryFlag from "react-country-flag";
-import NotFound from "@/app/not-found";
-import Link from "next/link";
-import { CloudIcon, MemoryStick, NetworkIcon, Undo2, ServerIcon, GlobeIcon, ClockIcon, CpuIcon } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { DurationPlan, plans, prices, Region, regions } from "@/components/home/region-list";
-import WidthWrapper from "@/components/ui/width-wrapper";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
-import { AnimatePresence, motion } from "framer-motion";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
-import { useSession } from "@/app/providers";
-import axios from "axios";
 import { apiConfig } from "@/app/config/apiconfig";
-import { gameEggsData } from "@/app/config/gameversionlist";
-import { LoadingSpinner } from "@/components/ui/loader";
+import { GameEgg, GameEggsData, gameEggsData } from "@/app/config/gameversionlist";
+import NotFound from "@/app/not-found";
+import { Region, regions } from "@/components/home/region-list";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { Label } from "@/components/ui/label";
+import { LoadingSpinner } from "@/components/ui/loader";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import WidthWrapper from "@/components/ui/width-wrapper";
+import { cn, durationsPlan, filterRegionsByTab, getDescriptionForPlan, getPriceForPlan } from "@/lib/utils";
+import { GamePlans } from "@/types/schema";
+import axios from "axios";
+import { motion } from "framer-motion";
+import { ClockIcon, CloudIcon, CpuIcon, GlobeIcon, MemoryStick, NetworkIcon, ServerIcon } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import ReactCountryFlag from "react-country-flag";
 
+interface ServerPlan {
+    cpu: number ; 
+    ram: number; 
+    disk: number; 
+    name: string;  
+}
 export default function ConfigPage() {
     const [value, SetValue] = useState("Mumbai");
 
-    const search = useSearchParams()
-    const g_id: string = search.get('id') || "none"
+    // const search = useSearchParams()
+    // const g_id: string = search.get('id') || "none"
     const searchParams = useSearchParams();
 
     const plan : string = searchParams.get('plan')  || "none";
@@ -40,12 +44,12 @@ export default function ConfigPage() {
 
     const [selectedTab, setSelectedTab] = useState('all');
     const [selectedDuration, setSelectedDuration] = useState('Monthly');
-    const [selectedPlan, setSelectedPlan] = useState('')
+    // const [selectedPlan, setSelectedPlan] = useState('')
     const [basePrice, setBasePrice] = useState(getPriceForPlan('Monthly'))
 
-    const [serverData, setServerData] = useState(null);
+    const [serverData, setServerData] = useState<GamePlans | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null || '');
+    const [error, setError] = useState('');
 
     const [loadingOrder, setLoadingOrder] = useState(false);
     const [errorOrder, setErrorOrder] = useState<string | null>(null);
@@ -53,7 +57,7 @@ export default function ConfigPage() {
 
     const filteredRegions = useMemo(() => filterRegionsByTab(selectedTab, regions), [selectedTab, regions]);
     const orderDetails = {
-        serverName: serverData?.gameServer?.name,
+        serverName: serverData?.name,
         location: value,
         duration: selectedDuration || 0,
         price: basePrice,
@@ -92,17 +96,18 @@ export default function ConfigPage() {
         fetchGamePlan();
     }, []);
 
-    const findGameConfig = (gameEggsData: Record<string, any>[], gameId: string): any => {
+    const findGameConfig = (gameEggsData: GameEggsData[], gameId: string) => {
         const foundGame = gameEggsData.find(game => game[gameId]);
         return foundGame ? foundGame[gameId] : null;
     };
 
     const gameData = findGameConfig(gameEggsData, game_id);
-    const prepareServerData = (gameEggsData: any, serverPlan: any) => {
+
+    const prepareServerData = (gameEggsData: GameEgg | null, serverPlan: ServerPlan | null) => {
         const combinedData = {
             ...gameEggsData,
             limits: {
-                cpu: serverPlan?.cpu * 100,
+                cpu: (serverPlan?.cpu ?? 0) * 100,
                 memory: serverPlan?.ram,
                 disk: serverPlan?.disk,
                 swap: 0,
@@ -116,11 +121,13 @@ export default function ConfigPage() {
 
         return combinedData;
     };
+
     const handleConfirmOrder = async () => {
         setLoadingOrder(true);
         setErrorOrder(null);
         setSuccessOrder(false);
         const orderData =  prepareServerData(gameData, serverData);
+
         console.log("Sending data:", orderData);
 
         try {
@@ -183,7 +190,7 @@ export default function ConfigPage() {
                                                     onValueChange={(e) => SetValue(e)}
                                                     className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4"
                                                 >
-                                                    {filteredRegions.map((region: any) => (
+                                                    {filteredRegions.map((region: Region ) => (
                                                         <div key={region.id} className="relative">
                                                             <RadioGroupItem value={region.city} id={region.city} className="peer sr-only" />
                                                             <Label
@@ -315,7 +322,7 @@ export default function ConfigPage() {
                                                     <span>{extraRam} GB</span>
                                                 </div>
 
-                                                <Select value={extraRam.toString()} onValueChange={(value: any) => setExtraRam(Number(value))}>
+                                                <Select value={extraRam.toString()} onValueChange={(value) => setExtraRam(Number(value))}>
                                                     <SelectTrigger className="w-full mt-20">
                                                         <SelectValue placeholder="Select RAM" />
                                                     </SelectTrigger>

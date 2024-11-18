@@ -1,9 +1,6 @@
 'use client'
 
-import { useEffect, useState, memo } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { cn } from '@/lib/utils'
+import { buttonVariants } from '@/components/ui/button'
 import {
     Card, CardContent,
     CardDescription,
@@ -11,9 +8,11 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card'
-import { buttonVariants } from '@/components/ui/button'
-import { DB_GameServerPricing } from '@/types/schema'
 import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
+import { DB_GameServerPricing } from '@/types/schema'
+import Link from 'next/link'
+import { memo, useEffect, useState } from 'react'
 
 const AdService = memo(({ code }: { code: string }) => (
     <div className="flex gap-2">
@@ -23,6 +22,8 @@ const AdService = memo(({ code }: { code: string }) => (
         {code}
     </div>
 ))
+AdService.displayName = 'AdService';
+
 
 const ProductPlaceholder = memo(() => (
     <div className='flex flex-col w-full'>
@@ -34,6 +35,8 @@ const ProductPlaceholder = memo(() => (
         <Skeleton className='mt-2 w-12 h-4 rounded-lg' />
     </div>
 ))
+ProductPlaceholder.displayName = 'ProductPlaceholder';
+
 
 interface ProductListingProps {
     data: DB_GameServerPricing

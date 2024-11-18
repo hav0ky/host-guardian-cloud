@@ -1,27 +1,19 @@
+import { NextResponse } from 'next/server';
 import { validateRequest } from '@/lib/auth';
 import query from '@/lib/db';
-import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
     try {
         const { user } = await validateRequest();
-
         if (!user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
-        let tickets;
-        if (user.role === 'admin') {
-
-          tickets = await query.support.getAllSupportTickets();
-        } else {
-            tickets = await query.support.getSupportTicketsByEmail(user.email);
-        }
-
-        return NextResponse.json({ success: true, tickets }, { status: 200 });
+        const counts = await query.support.getTicketCounts();
+        return NextResponse.json({ success: true, counts }, { status: 200 });
     } catch (error) {
-        console.error('Error retrieving support tickets:', error);
+        console.error('Error retrieving ticket counts:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

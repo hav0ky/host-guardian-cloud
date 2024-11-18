@@ -1,21 +1,20 @@
 'use client'
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { apiConfig } from "@/app/config/apiconfig";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from "@/components/ui/carousel"
-import Image from "next/image";
-import dynamic from "next/dynamic";
-import messages from './game-data.json'
-import Autoplay from "embla-carousel-autoplay"
+} from "@/components/ui/carousel";
 import WidthWrapper from "@/components/ui/width-wrapper";
 import { GameServer } from "@/types/schema";
 import axios from "axios";
-import { Skeleton } from "../ui/skeleton";
+import Autoplay from "embla-carousel-autoplay";
 import debounce from 'lodash/debounce';
-import { apiConfig } from "@/app/config/apiconfig";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { LoadingSpinner } from "../ui/loader";
+import { Skeleton } from "../ui/skeleton";
 
 const HeroFeatures = dynamic(() => import("./herofeatures"), { loading: () => <Skeleton />, ssr: false });
 const GameServers = dynamic(() => import("./gamelist"), { loading: () => <Skeleton />, ssr: false });
@@ -132,18 +131,18 @@ const GameServersPage = () => {
   )
 }
 
-const ProductPlaceholder = () => {
-  return (
-    <div className='flex flex-col w-full'>
-      <div className='relative bg-zinc-100 aspect-square w-full overflow-hidden rounded-xl'>
-        <Skeleton className='h-full w-full' />
-      </div>
-      <Skeleton className='mt-4 w-2/3 h-4 rounded-lg' />
-      <Skeleton className='mt-2 w-16 h-4 rounded-lg' />
-      <Skeleton className='mt-2 w-12 h-4 rounded-lg' />
-    </div>
-  )
-}
+// const ProductPlaceholder = () => {
+//   return (
+//     <div className='flex flex-col w-full'>
+//       <div className='relative bg-zinc-100 aspect-square w-full overflow-hidden rounded-xl'>
+//         <Skeleton className='h-full w-full' />
+//       </div>
+//       <Skeleton className='mt-4 w-2/3 h-4 rounded-lg' />
+//       <Skeleton className='mt-2 w-16 h-4 rounded-lg' />
+//       <Skeleton className='mt-2 w-12 h-4 rounded-lg' />
+//     </div>
+//   )
+// }
 
 
 

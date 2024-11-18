@@ -1,7 +1,7 @@
 // https://cdn.discordapp.com/avatars/516275109594660867/c545702a9d929f165df6690c41edb618
 
 import Link from "next/link";
-import { LayoutGrid, LogOut, User } from "lucide-react";
+// import { LayoutGrid, LogOut, User } from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -22,9 +22,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { invalidateRequest, validateRequest } from "@/lib/auth";
 
-interface ActionResult {
-    error: string | null;
-}
+// interface ActionResult {
+//     error: string | null;
+// }
 
 export async function UserNav() {
 

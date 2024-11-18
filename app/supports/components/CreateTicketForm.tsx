@@ -1,20 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Bold, Italic, List, Code, Quote } from "lucide-react";
-import axios from "axios";
-import { toast } from "sonner";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { SA_User } from "@/types/schema";
+import axios from "axios";
 import { useRouter } from "next/navigation";
-import { MSG_URL, CREATE_SUPPORT_URL } from "../apiConstants";
+import { useState } from "react";
+import { toast } from "sonner";
+import { CREATE_SUPPORT_URL, MSG_URL } from "../apiConstants";
 import TextEditor from "./TextEditor";
-import { Ticket } from "../types";
+import { SU_ERROR } from "../types";
 
 interface CreateTicketFormProps {
     user: SA_User
@@ -23,12 +21,17 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ user }) => {
     // const [tickets, setTickets] = useState<Ticket[]>([]);
     // const [error, setError] = useState<string | null>(null);
     const [message, setMessage] = useState("");
-    const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+    // const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
     const [subject, setSubject] = useState('');
     const [department, setDepartment] = useState('');
     const [priority, setPriority] = useState('');
-    const [errors, setErrors] = useState<any>({});
-    const [selectedSupportItem, setSelectedSupportItem] = useState<number | null>(null);
+    const [errors, setErrors] = useState<SU_ERROR>({
+        subject: '',
+        department: '',
+        priority: '',
+        message: '',
+    });
+    // const [selectedSupportItem, setSelectedSupportItem] = useState<number | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
     const [shouldReset, setShouldReset] = useState(false);
@@ -38,54 +41,59 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ user }) => {
     const userid = user.id;
 
 
-    const applyStyle = (style: string) => {
-        const textarea = document.getElementById("message") as HTMLTextAreaElement;
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const selectedText = textarea.value.substring(start, end);
-        let replacement = "";
+    // const applyStyle = (style: string) => {
+    //     const textarea = document.getElementById("message") as HTMLTextAreaElement;
+    //     const start = textarea.selectionStart;
+    //     const end = textarea.selectionEnd;
+    //     const selectedText = textarea.value.substring(start, end);
+    //     let replacement = "";
 
-        switch (style) {
-            case "bold":
-                replacement = `**${selectedText}**`;
-                break;
-            case "italic":
-                replacement = `*${selectedText}*`;
-                break;
-            case "heading":
-                replacement = `### ${selectedText}`;
-                break;
-            case "unordered-list":
-                replacement = `\n- ${selectedText.split("\n").join("\n- ")}`;
-                break;
-            case "code":
-                replacement = `\`${selectedText}\``;
-                break;
-            case "quote":
-                replacement = `> ${selectedText.split("\n").join("\n> ")}`;
-                break;
-        }
+    //     switch (style) {
+    //         case "bold":
+    //             replacement = `**${selectedText}**`;
+    //             break;
+    //         case "italic":
+    //             replacement = `*${selectedText}*`;
+    //             break;
+    //         case "heading":
+    //             replacement = `### ${selectedText}`;
+    //             break;
+    //         case "unordered-list":
+    //             replacement = `\n- ${selectedText.split("\n").join("\n- ")}`;
+    //             break;
+    //         case "code":
+    //             replacement = `\`${selectedText}\``;
+    //             break;
+    //         case "quote":
+    //             replacement = `> ${selectedText.split("\n").join("\n> ")}`;
+    //             break;
+    //     }
 
-        const newMessage = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
-        setMessage(newMessage);
-    };
+    //     const newMessage = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+    //     setMessage(newMessage);
+    // };
 
-    const renderPreview = () => {
-        let html = message
-            .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-            .replace(/\*(.*?)\*/g, "<em>$1</em>")
-            .replace(/### (.*?)\n/g, "<h3>$1</h3>")
-            .replace(/- (.*?)(\n|$)/g, "<li>$1</li>")
-            .replace(/`(.*?)`/g, "<code>$1</code>")
-            .replace(/> (.*?)(\n|$)/g, "<blockquote>$1</blockquote>");
-        return { __html: html };
-    };
+    // const renderPreview = () => {
+    //     let html = message
+    //         .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+    //         .replace(/\*(.*?)\*/g, "<em>$1</em>")
+    //         .replace(/### (.*?)\n/g, "<h3>$1</h3>")
+    //         .replace(/- (.*?)(\n|$)/g, "<li>$1</li>")
+    //         .replace(/`(.*?)`/g, "<code>$1</code>")
+    //         .replace(/> (.*?)(\n|$)/g, "<blockquote>$1</blockquote>");
+    //     return { __html: html };
+    // };
     const handleResetComplete = () => { setShouldReset(false); };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
         setLoading(true);
         e.preventDefault();
-        const newErrors: any = {};
+        const newErrors: SU_ERROR = {
+            subject: '',
+            department: '',
+            priority: '',
+            message: '',
+        }; 
         if (!subject.trim()) {
             newErrors.subject = 'Subject is required.';
         }
@@ -117,8 +125,12 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ user }) => {
                     setDepartment('');
                     setPriority('');
                     setMessage('');
-                    setErrors({});
-                    setShouldReset(true);
+                    setErrors({
+                        subject: '',
+                        department: '',
+                        priority: '',
+                        message: '',
+                    });                    setShouldReset(true);
                 }
                 setLoading(false);
                 const newTicketId = response.data.ticketId;
@@ -131,16 +143,18 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ user }) => {
                 } catch {
                     console.warn("Message creation failed, but proceeding to redirect.");
                 }
+                toast.success("Ticket created successfully.")
                 router.push(`/supports?newTicketId=${newTicketId}`);
-            } catch (error: any) {
+            } catch (error: unknown) {
                 console.error("Error submitting the ticket:", error);
-                if (error.response && error?.response.data && error.response.data.error) {
+
+                if (axios.isAxiosError(error) && error.response && error.response.data?.error) {
                     alert(`Error: ${error.response.data.error}`);
                 } else {
                     alert("An unexpected error occurred. Please try again later.");
                 }
-                setLoading(false);
 
+                setLoading(false);
             }
         }
     };
@@ -215,15 +229,18 @@ const CreateTicketForm: React.FC<CreateTicketFormProps> = ({ user }) => {
                         <div className="space-y-2">
                             <Label htmlFor="message">Message</Label>
                             <div className=" dark:border-neutral-700 border-input">
-                            <TextEditor wordLimit={50} handleChange={setMessage} initialContent={''} placeHolderText={'Type your message...'} 
-                        shouldReset={shouldReset} onResetComplete={handleResetComplete} />
+                                <TextEditor wordLimit={50} handleChange={setMessage} initialContent={''} placeHolderText={'Type your message...'}
+                                    shouldReset={shouldReset} onResetComplete={handleResetComplete} />
 
                             </div>
                             {errors.message && <p className="text-red-500 text-sm">{errors.message}</p>}
                         </div>
                     </div>
                     <CardFooter className="flex justify-end space-x-2 mt-6">
-                        <Button variant="outline" type="button" onClick={() => toast.info("Ticket creation canceled.")}>
+                        <Button variant="outline" type="button" onClick={() => {
+                            toast.info("Ticket creation canceled.");
+                            router.push("/supports");
+                        }}>
                             Cancel
                         </Button>
                         <Button type="submit" disabled={loading || !subject.trim() || !department.trim() || !priority.trim() || !message.trim()}>

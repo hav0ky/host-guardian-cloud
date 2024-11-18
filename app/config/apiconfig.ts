@@ -1,4 +1,4 @@
-import React from "react";
+import { DB_PanelUsers, PANEL_USER } from "@/types/schema";
 import axios from 'axios';
 
 const baseUrl = 'https://newpanel.cs2hvh.com/api/application'
@@ -26,9 +26,9 @@ export const apiConfig = {
 
 
 
-export const createPanelUserTD = async (userData: any) => {
+export const createPanelUserTD = async (userData: PANEL_USER) => {
     try {
-        const response = await axios.post(apiConfig.thirdparty.createUser, userData, {
+        const response: {status:number, data:{atributes: DB_PanelUsers}} = await axios.post(apiConfig.thirdparty.createUser, userData, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -36,8 +36,8 @@ export const createPanelUserTD = async (userData: any) => {
             },
         });
         return response; 
-    } catch (error: any) {
-        if (error.response) {
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error) && error.response) {
             return {
                 status: error.response.status,
                 message: error.response.data,
@@ -48,4 +48,5 @@ export const createPanelUserTD = async (userData: any) => {
                 message: 'Server error',
             };
         }
-    }}
+    }
+}

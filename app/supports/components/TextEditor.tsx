@@ -1,23 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import {
+    AlignCenter,
+    AlignJustify,
+    AlignLeft,
+    AlignRight,
     Bold,
-    Italic,
-    Underline as UnderlineIcon,
-    Strikethrough,
     Code,
+    Italic,
     Link as LinkIcon,
     ListOrdered,
     List as ListUnordered,
-    AlignLeft,
-    AlignCenter,
-    AlignRight,
-    AlignJustify,
-    Undo,
     Redo,
+    Strikethrough,
+    Underline as UnderlineIcon,
+    Undo,
 } from 'lucide-react';
-
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface TextEditorProps {
     wordLimit?: number;
@@ -26,18 +25,20 @@ interface TextEditorProps {
     placeHolderText?: string;
     shouldReset?: boolean;
     onResetComplete?: () => void;
+    isEditable?: boolean;
 }
 
 const TextEditor: React.FC<TextEditorProps> = ({
-    wordLimit = 5,
+    wordLimit = 500,
     handleChange,
     initialContent = '',
-    placeHolderText,
+    placeHolderText = "Enter text here...",
     shouldReset = false,
     onResetComplete,
+    isEditable = true,
 }) => {
     const editorRef = useRef<HTMLDivElement>(null);
-    const [wordCount, setWordCount] = useState(0);
+    // const [wordCount, setWordCount] = useState(0);
     const [isOverLimit, setIsOverLimit] = useState(false);
     const [content, setContent] = useState(initialContent);
 
@@ -51,7 +52,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
             if (editorRef.current) {
                 editorRef.current.innerHTML = '';
             }
-            setWordCount(0);
+            // setWordCount(0);
             setIsOverLimit(false);
             if (onResetComplete) onResetComplete();
         }
@@ -67,7 +68,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
         const textContent = editorRef.current?.textContent || '';
         setContent(textContent);
         const currentWordCount = countWords(textContent);
-        setWordCount(currentWordCount);
+        // setWordCount(currentWordCount);
         setIsOverLimit(currentWordCount > wordLimit);
         if (currentWordCount <= wordLimit) {
             handleChange?.(htmlContent);
@@ -77,7 +78,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
     return (
         <div className="border rounded-md p-2">
             <MenuBar
-                execCommand={(cmd, value) => { document.execCommand(cmd, false, value); editorRef.current?.focus(); }}
+                execCommand={(cmd, value) => { document.execCommand(cmd, false, value ?? ""); editorRef.current?.focus(); }}
                 handleLink={() => { const url = prompt('Enter the URL', 'https://'); if (url) document.execCommand('createLink', false, url); }}
                 handleUndo={() => document.execCommand('undo', false)}
                 handleRedo={() => document.execCommand('redo', false)}
@@ -85,7 +86,7 @@ const TextEditor: React.FC<TextEditorProps> = ({
             <Separator className="my-2" />
             <div
                 ref={editorRef}
-                contentEditable
+                contentEditable={isEditable} 
                 onInput={handleContentChange}
                 onKeyUp={handleContentChange}
                 className={`min-h-[200px] focus:outline-none p-2 ${isOverLimit ? 'border-red-500' : ''}`}

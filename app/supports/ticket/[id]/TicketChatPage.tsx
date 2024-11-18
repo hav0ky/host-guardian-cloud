@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import DOMPurify from "dompurify";
-import { useParams, useRouter } from "next/navigation"; // Use router for page refresh
-import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import axios from "axios";
-import { toast } from "sonner";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { LoadingSpinner } from "@/components/ui/loader";
-import SupportContentWrapper from "../../components/SupportContentWrapper";
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogTitle } from "@/components/ui/dialog";
-import { GET_SUPPORT_TICKET_URL, MSG_URL, UPDATE_SUPPORT_URL } from "../../apiConstants";
-import TextEditor from "../../components/TextEditor";
+import axios from "axios";
+import DOMPurify from "dompurify";
 import { Lock } from 'lucide-react';
+import { useParams, useRouter } from "next/navigation"; // Use router for page refresh
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { GET_SUPPORT_TICKET_URL, MSG_URL, UPDATE_SUPPORT_URL } from "../../apiConstants";
+import SupportContentWrapper from "../../components/SupportContentWrapper";
+import TextEditor from "../../components/TextEditor";
+import { SA_User } from "@/types/schema";
 
 interface SupportTicketData {
     id: number;
@@ -24,12 +24,12 @@ interface SupportTicketData {
 interface MessageData {
     id: number;
     ticket_id: number;
-    sender_id: number;
+    sender_id: string;
     message_text: string;
     created_at: Date;
 }
 
-export default function TicketChatPage({ user }: { user: any }) {
+export default function TicketChatPage({ user }: { user: SA_User }) {
     const { id: ticketId } = useParams();
     const router = useRouter(); // For page refresh
     const [ticket, setTicket] = useState<SupportTicketData | null>(null);
@@ -104,13 +104,13 @@ export default function TicketChatPage({ user }: { user: any }) {
     };
 
     const handleConfirmCloseTicket = () => {
-        updateTicketStatus(ticketId, 'closed');
+        updateTicketStatus(ticketId as string, 'closed');
         setIsDialogOpen(false);
     };
 
     const handleReopenTicket = async () => {
         try {
-            await updateTicketStatus(ticketId, 'open');
+            await updateTicketStatus(ticketId as string, 'open');
             setTicket(prevTicket => prevTicket ? { ...prevTicket, status: 'open' } : null);
             setIsDialogOpen(false);
         } catch (error) {
@@ -162,7 +162,7 @@ export default function TicketChatPage({ user }: { user: any }) {
                 <CardContent>
                     <div className="space-y-4 mt-4">
                         {messages.map((msg) => {
-                            const isMessageFromAdmin = msg.sender_id === user.id && isAdmin;
+                            // const isMessageFromAdmin = msg.sender_id === user.id && isAdmin;
                             const isOwnMessage = msg.sender_id === user.id;
 
                             const messageAlignment = isOwnMessage
@@ -201,7 +201,7 @@ export default function TicketChatPage({ user }: { user: any }) {
                     </div>
                     <div className="dark:border-neutral-700 border-input mt-10">
                         <TextEditor wordLimit={50} handleChange={setMessageText} initialContent={''} placeHolderText={'Type your message...'}
-                            shouldReset={shouldReset} onResetComplete={handleResetComplete} />
+                            shouldReset={shouldReset} onResetComplete={handleResetComplete} isEditable={ticket.status ==='closed' ? false : true}/>
                     </div>
                 </CardContent>
 

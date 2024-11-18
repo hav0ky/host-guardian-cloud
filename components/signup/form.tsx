@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input"
 import { useForm } from "react-hook-form"
 import { registerSchema } from "@/types/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useRouter } from "next/navigation";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -20,7 +19,6 @@ interface RegisterFormProps extends React.HTMLAttributes<HTMLDivElement> { }
 
 export default function RegisterForm({ className, ...props }: RegisterFormProps) {
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
-    const router = useRouter()
     const form = useForm<Input>({
         resolver: zodResolver(registerSchema),
         defaultValues: {

@@ -6,7 +6,7 @@ interface SupportContentWrapperProps {
 
 const SupportContentWrapper: React.FC<SupportContentWrapperProps> = ({ children }) => {
     return (
-        <div className="max-w-4xl mx-auto bg-white dark:bg-neutral-900 rounded-lg shadow-md">
+        <div className="max-w-5xl mx-auto bg-white dark:bg-neutral-900 rounded-lg ml-16 shadow-md mb-20">
             {children}
         </div>
     );

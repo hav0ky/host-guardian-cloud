@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import TicketTable from './components/TicketTable';
-import SupportContentWrapper from './components/SupportContentWrapper';
 import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useSupportTickets } from './SupportTicketsContext';
-
+import SupportContentWrapper from './components/SupportContentWrapper';
+import TicketTable from './components/TicketTable';
+import { Ticket } from './types';
 const SupportsPage: React.FC = () => {
     const { tickets } = useSupportTickets();
-    const [orderedTickets, setOrderedTickets] = useState(tickets);
+const [orderedTickets, setOrderedTickets] = useState<Ticket[]>(tickets);
 
     const searchParams = useSearchParams();
     const newTicketId = searchParams.get("newTicketId");

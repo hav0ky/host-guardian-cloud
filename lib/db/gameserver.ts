@@ -6,6 +6,7 @@ interface DB_GameServerDB extends DB_GameServer, RowDataPacket { }
 interface DB_GameServerPricingDB extends DB_GameServerPricing, RowDataPacket { }
 interface GamePlansDB extends GamePlans, RowDataPacket { }
 interface DB_PanelUser extends DB_PanelUsers, RowDataPacket { }
+interface DB_GameServerFeature extends DB_GameServerFeatures, RowDataPacket { }
 
 const GameServerProducts = {
     getAll: async (): Promise<DB_GameServer[]> => {
@@ -92,7 +93,7 @@ const GameServerProducts = {
         }
     },
 
-    getGameFeatures: async (game_id: string): Promise<(DB_GameServer & { features: DB_GameServerFeatures[] }) | null> => {
+    getGameFeatures: async (game_id: string): Promise<(DB_GameServer & { features: DB_GameServerFeature[] }) | null> => {
         try {
             // Query to get all database products
             const [rows] = await db.query<DB_GameServerDB[]>('SELECT * FROM `p_gameserver` WHERE id = ?', [game_id]);
@@ -101,7 +102,7 @@ const GameServerProducts = {
             const dbProduct = rows[0];
             if (dbProduct.versions) dbProduct.versions = (dbProduct.versions as unknown as string).split(',');
 
-            const [features] = await db.query<DB_GameServerFeatures[]>(
+            const [features] = await db.query<DB_GameServerFeature[]>(
                 'SELECT * FROM `p_gameserver_features` WHERE id = ?',
                 [game_id]
             );
@@ -137,7 +138,7 @@ const GameServerProducts = {
         }
     },
 
-    getPanelUserByEmail: async (email: string): Promise<DB_PanelUser | null> => {
+    getPanelUserByEmail: async (email: string| undefined ): Promise<DB_PanelUser | null> => {
         try {
 
             const [rows] = await db.query<DB_PanelUser[]>('SELECT * FROM `panel_users` WHERE email = ?', [email]);
@@ -155,7 +156,7 @@ const GameServerProducts = {
     },
 
 
-    createPanelUser: async (props: Partial<DB_PanelUser>): Promise<number | null> => {
+    createPanelUser: async (props:DB_PanelUsers): Promise<number | null> => {
         try {
             const keys = Object.keys(props);
             const values = Object.values(props);

@@ -1,5 +1,6 @@
 
 export interface Ticket {
+    filter(arg0: (ticket: Ticket) => boolean): unknown;
     id: number;
     name: string;
     email: string;
@@ -20,4 +21,11 @@ export interface MessageData {
     message_text: string;
     created_at: Date;
     last_updated: Date;
+}
+
+export interface SU_ERROR{
+    subject: string;
+    department: string;
+    priority: string;
+    message: string;
 }

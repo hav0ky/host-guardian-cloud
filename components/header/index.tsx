@@ -5,7 +5,7 @@ import { Headphones, ShoppingCart, HelpCircle } from 'lucide-react';
 
 export function SiteHeader() {
   return (
-    <header className="top-0 z-50 sticky w-full bg-background dark:bg-background-dark/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:supports-[backdrop-filter]:bg-background-dark/60">
+    <header className="top-0 z-50 sticky w-full bg-background dark:bg-background-dark/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:supports-[backdrop-filter]:bg-background-dark/60 border-b">
       <div className="container max-w-screen-2xl px-4 sm:px-14 mx-auto flex h-14 items-center justify-center md:justify-between">
         {/* <div className="block sm:hidden mr-3">
                     <MobileNav />

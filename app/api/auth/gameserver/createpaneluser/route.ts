@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import query from '@/lib/db';
 
-export async function POST(request: Request, response: Response) {
+export async function POST(request: Request) {
     try {
         console.log("GOT THE DATA", request.json())
         const data = await request.json();
@@ -15,9 +15,9 @@ export async function POST(request: Request, response: Response) {
         //     return NextResponse.json({ error: 'User already exists' }, { status: 409 });
         // }
 
-        const [result] = await query.gameservers.createPanelUser(data)
+        const result = await query.gameservers.createPanelUser(data)
 
-        return NextResponse.json({ message: 'User created successfully', userId: result.insertId }, { status: 201 });
+        return NextResponse.json({ message: 'User created successfully', userId: result }, { status: 201 });
     } catch (error) {
         console.error('Error creating user:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

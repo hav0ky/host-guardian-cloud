@@ -9,11 +9,8 @@ import { LoadingSpinner } from "@/components/ui/loader";
 import { Ticket } from "../types";
 
 
-interface TicketTableProps {
-    tickets: Ticket[];
-}
+const TicketTable: React.FC<{ tickets: Ticket[] }> = ({ tickets }) => {
 
-const TicketTable: React.FC<TicketTableProps> = ({ tickets }) => {
     const router = useRouter();
     const { user, loading } = useUser();
     const [isLoading, setIsLoading] = useState(true);
@@ -60,7 +57,7 @@ const TicketTable: React.FC<TicketTableProps> = ({ tickets }) => {
         setCurrentPage(page);
     };
 
-    if (loading) {
+    if (loading || isLoading) {
         return <LoadingSpinner />;
     }
 

@@ -1,9 +1,13 @@
-import { apiConfig, createPanelUserTD, nodesID } from '@/app/config/apiconfig';
+import { apiConfig, createPanelUserTD } from '@/app/config/apiconfig';
 import { validateRequest } from '@/lib/auth';
 import query from '@/lib/db';
-import axios from 'axios';
+import { CREATE_PANEL_USER, DB_PanelUsers } from '@/types/schema';
+interface DB_PanelUser extends DB_PanelUsers, RowDataPacket { }
 
-export async function POST(request: Request, response: Response) {
+import axios from 'axios';
+import { RowDataPacket } from 'mysql2/promise';
+
+export async function POST(request: Request) {
     try {
         // Validate user request and extract data
         const { user } = await validateRequest();
@@ -11,7 +15,7 @@ export async function POST(request: Request, response: Response) {
         // data.node = nodesID;
 
         const userPass = "Test@123"; 
-        const userData = {
+        const userData: CREATE_PANEL_USER = {
             email: user?.email,
             username: 'pratik212',
             first_name: user?.username,
@@ -24,12 +28,13 @@ export async function POST(request: Request, response: Response) {
         if (!userExist) {
             // Create a new panel user if not found
             const res = await createPanelUserTD(userData);
-
-            if (res?.status === 201) {
-                let datauser = res?.data?.attributes;
+       
+            if (res?.status === 201 && 'data' in res) {
+                const datauser = res?.data?.atributes;
                 datauser.password = userPass;
                 await query.gameservers.createPanelUser(datauser);
-                userExist = datauser; // Use newly created user
+                userExist = datauser as DB_PanelUser | null;
+
             } else if (res?.status === 422) {
                 console.log('User already exists on the server.');
             } else {
@@ -50,7 +55,7 @@ export async function POST(request: Request, response: Response) {
         const allocationsData = allocationsResponse.data.data;
         console.log("Received allocationsData:", allocationsData);
 
-        const firstAvailableAllocation = allocationsData.find((item: any) => !item.attributes.assigned);
+        const firstAvailableAllocation = allocationsData.find((item: { attributes: { assigned: string; }; }) => !item.attributes.assigned);
         data.allocation = {
             default: firstAvailableAllocation
                 ? firstAvailableAllocation.attributes.id

@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
         if (messageId) {
             await query.support.updateTicketLastUpdated(ticket_id);
-            if (user.role === 'admin') {
+            if (user && user.role === 'admin') {
                 await query.support.updateTicketStatus(ticket_id, 'in progress');
                 await query.support.updateTicketAdminReplied(ticket_id, 'yes');
             }

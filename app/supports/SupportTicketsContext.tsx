@@ -2,13 +2,8 @@ import React, { createContext, useContext, ReactNode, useState, useCallback, use
 import axios from 'axios';
 import { GET_SUPPORT_TICKET_URL } from './apiConstants';
 import { LoadingSpinner } from '@/components/ui/loader';
+import { Ticket } from './types';
 
-interface Ticket {
-    id: number;
-    name: string;
-    last_updated: string;
-    // other fields
-}
 
 interface SupportTicketsContextType {
     tickets: Ticket[];

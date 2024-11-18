@@ -1,18 +1,29 @@
 import { RowDataPacket } from "mysql2";
 
 // User Interface
-interface SA_User {
+export interface SA_User {
     id: string;
     username: string;
-    email: string;
+    email: string | undefined;
     password: string;
     avatar: string;
     role: "member" | "admin";
     created_at: Date;
+    password?: string | undefined;
+    created_at?: string | undefined;
 }
 
+export interface CREATE_PANEL_USER{
+    email: string | undefined;
+    username: string | undefined;
+    first_name: string | undefined;
+    last_name: string,
+    password: string
+}
+
+
 // Discord User Interface
-interface DiscordUser {
+ interface DiscordUser {
     id: string;
     username: string;
     avatar: string;
@@ -162,19 +173,53 @@ export type GamePlans = {
     ram: number;
     disk: number;
 }
-
-
 export interface DB_PanelUsers {
+        id: number; // Required, based on DB_PanelUsers and PANEL_USER_RESULT
+        user_id: number; // Required, based on DB_PanelUsers
+        username: string; // Required, based on DB_PanelUsers
+        email: string; // Required, based on DB_PanelUsers
+        password: string; // Required, based on all interfaces
+        uuid: string; // Required, based on DB_PanelUsers
+        first_name: string; // Required, based on DB_PanelUsers
+        last_name: string; // Required, based on PANEL_USER and PANEL_USER_RESULT
+        external_id: string | null; // Optional in PANEL_USER, required in DB_PanelUsers
+        language?: string; // Optional, based on PANEL_USER
+        root_admin: boolean; // Required, based on DB_PanelUsers
+        "2fa": boolean; // Required, based on DB_PanelUsers
+        created_at: string; // Required, based on DB_PanelUsers
+        updated_at: string; // Required, based on DB_PanelUsers
+    }
+export interface PANEL_USER {
+    email: string | undefined;
+    username: string | undefined;
+    first_name: string | undefined;
+    last_name: string,
+    password: string
+    id?: number | undefined;
+    external_id?: string | null;
+    uuid?: string;
+    language?: string;
+    root_admin?: boolean;
+    "2fa"?: boolean; 
+    created_at?: string; 
+    updated_at?: string; 
+    user_id?: number;
+    id: number | undefined;
+}
+export interface PANEL_USER_RESULT {
+    email: string | undefined;
+    username: string | undefined;
+    first_name: string | undefined;
+    last_name: string,
+    password: string
+    id?: number | undefined;
+    external_id?: string | null;
+    uuid?: string;
+    language?: string;
+    root_admin?: boolean;
+    "2fa"?: boolean; 
+    created_at?: string;
+    updated_at?: string;
+    user_id?: number;
     id: number;
-    username: string;
-    email: string;
-    password: string;
-    uuid: string;
-    first_name: string;
-    created_at: string;
-    updated_at: string;
-    user_id: number;
-    root_admin: boolean;
-   '2fa' : boolean;
-    external_id: string;
 }

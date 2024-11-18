@@ -1,11 +1,9 @@
-import React from "react";
-import { validateRequest } from "@/lib/auth";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import CreateTicketForm from "../components/CreateTicketForm";
 import { LoadingSpinner } from "@/components/ui/loader";
-interface CreateTicketPageWrapperProps {
-    fetchTickets: () => Promise<void>;
-}
+import { validateRequest } from "@/lib/auth";
+import CreateTicketForm from "../components/CreateTicketForm";
+// interface CreateTicketPageWrapperProps {
+//     fetchTickets: () => Promise<void>;
+// }
 export default async function CreateTicketPageWrapper() {
     const { user } = await validateRequest(); 
     if (!user) {
